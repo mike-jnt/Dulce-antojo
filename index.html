@@ -446,6 +446,325 @@
       .row-actions{grid-template-columns:1fr}.tabs{grid-template-columns:1fr}
     }
 
+
+    /* ===== Versión móvil profesional: navegación clara, jerarquía y acciones accesibles ===== */
+    .section-guide{display:none}
+    .mobile-bottom-nav,.mobile-more-backdrop{display:none}
+
+    @media(max-width:760px){
+      :root{
+        --bottom-nav-height:76px;
+      }
+      body{
+        background:
+          radial-gradient(circle at top left, rgba(255,226,235,.95), transparent 34%),
+          linear-gradient(180deg,#fff7fb 0%,#fff 42%,#fff7fb 100%);
+      }
+      aside,
+      aside:hover,
+      aside:focus-within{
+        padding:10px 12px 8px;
+        box-shadow:0 8px 24px rgba(91,48,47,.09);
+      }
+      .brand,
+      aside:hover .brand,
+      aside:focus-within .brand{
+        height:62px;
+        margin-bottom:0;
+        box-shadow:0 8px 20px rgba(91,48,47,.07);
+      }
+      .mobile-menu{display:none!important}
+      main{
+        padding:14px 14px calc(var(--bottom-nav-height) + 24px);
+        overflow:visible;
+      }
+      .topbar{
+        background:linear-gradient(135deg,#5b302f,#8b4b58 52%,#e79bb2);
+        color:#fff;
+        border-radius:22px;
+        padding:16px;
+        box-shadow:0 16px 36px rgba(91,48,47,.16);
+        margin-bottom:12px;
+      }
+      .topbar h2{color:#fff;font-size:23px}
+      .topbar p{color:rgba(255,255,255,.86)}
+      .topbar .actions{
+        grid-template-columns:1fr;
+        width:100%;
+      }
+      .topbar .actions button{
+        background:rgba(255,255,255,.16);
+        color:#fff;
+        border:1px solid rgba(255,255,255,.28);
+        box-shadow:none;
+        backdrop-filter:blur(10px);
+      }
+      .section-guide{
+        display:block;
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:20px;
+        padding:14px;
+        margin:0 0 14px;
+        box-shadow:0 12px 26px rgba(91,48,47,.08);
+      }
+      .guide-kicker{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        color:var(--brand-dark);
+        font-weight:900;
+        font-size:13px;
+        margin-bottom:8px;
+      }
+      .guide-kicker span{
+        width:28px;height:28px;border-radius:10px;
+        display:grid;place-items:center;
+        background:var(--panel-2);
+      }
+      .guide-text{
+        color:var(--muted);
+        font-size:13px;
+        line-height:1.42;
+        margin:0;
+      }
+      .guide-steps{
+        display:grid;
+        gap:8px;
+        margin-top:12px;
+      }
+      .guide-step{
+        display:flex;
+        gap:9px;
+        align-items:flex-start;
+        background:#fffafd;
+        border:1px solid #f3d5df;
+        border-radius:14px;
+        padding:10px;
+        color:var(--text);
+        font-size:12.5px;
+        line-height:1.3;
+      }
+      .guide-step b{
+        width:22px;
+        height:22px;
+        min-width:22px;
+        border-radius:8px;
+        display:grid;
+        place-items:center;
+        background:var(--brand);
+        color:#fff;
+        font-size:11px;
+      }
+      .section-title{
+        background:transparent;
+        border:0;
+        padding:0;
+      }
+      .section-title h3{
+        font-size:18px;
+        padding-left:10px;
+        border-left:5px solid var(--brand);
+      }
+      .card{
+        border:1px solid #f0ccd8;
+        box-shadow:0 12px 28px rgba(91,48,47,.08);
+      }
+      .metric{
+        position:relative;
+        overflow:hidden;
+        border:1px solid #efd1da;
+      }
+      .metric::after{
+        content:"";
+        position:absolute;
+        right:-30px;
+        top:-30px;
+        width:92px;
+        height:92px;
+        border-radius:999px;
+        background:rgba(231,155,178,.16);
+      }
+      #dashboardMetrics .metric:first-child{
+        background:linear-gradient(135deg,#fff,#ffeaf1);
+        border-color:#e9b6c5;
+      }
+      .table-wrap{
+        margin-top:4px;
+      }
+      tr{
+        border-radius:18px;
+        border-color:#edc5d2;
+      }
+      td:first-child{
+        background:linear-gradient(180deg,#fffafd,#fff)!important;
+      }
+      td:first-child::before{
+        color:var(--brand-dark);
+      }
+      .row-actions{
+        grid-template-columns:1fr 1fr;
+        padding-top:2px;
+      }
+      .row-actions button{
+        min-height:40px;
+        font-weight:900;
+      }
+      .row-actions button:first-child{
+        background:var(--brand-dark);
+      }
+      .pill{
+        padding:5px 8px;
+      }
+      .modal-card{
+        background:#fff7fb;
+      }
+      .modal-header{
+        background:linear-gradient(135deg,#fff,#ffeaf1);
+        border-bottom:1px solid var(--line);
+        position:sticky;
+        top:0;
+        z-index:4;
+      }
+      .modal-body{
+        background:#fff7fb;
+      }
+      .modal-body form,
+      .modal-body .card{
+        background:#fff;
+        border-radius:18px;
+      }
+      .mobile-bottom-nav{
+        display:grid;
+        grid-template-columns:repeat(5,1fr);
+        position:fixed;
+        left:10px;
+        right:10px;
+        bottom:10px;
+        z-index:80;
+        background:rgba(255,255,255,.96);
+        border:1px solid rgba(231,155,178,.45);
+        border-radius:24px;
+        box-shadow:0 18px 40px rgba(91,48,47,.20);
+        backdrop-filter:blur(16px);
+        padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+        gap:2px;
+      }
+      .mobile-bottom-btn{
+        border:0;
+        box-shadow:none;
+        background:transparent;
+        color:var(--muted);
+        border-radius:18px;
+        padding:7px 4px;
+        min-height:54px;
+        display:flex;
+        flex-direction:column;
+        gap:3px;
+        align-items:center;
+        justify-content:center;
+        font-size:10.5px;
+        font-weight:900;
+        line-height:1.1;
+      }
+      .mobile-bottom-btn .mi{
+        font-size:20px;
+        line-height:1;
+      }
+      .mobile-bottom-btn.active{
+        background:linear-gradient(180deg,#ffeaf1,#fff4f7);
+        color:var(--brand-dark);
+      }
+      .mobile-more-backdrop{
+        position:fixed;
+        inset:0;
+        z-index:90;
+        background:rgba(59,37,42,.38);
+        padding:18px 12px calc(94px + env(safe-area-inset-bottom));
+        align-items:flex-end;
+        justify-content:center;
+      }
+      .mobile-more-backdrop.show{
+        display:flex;
+      }
+      .mobile-more-sheet{
+        width:100%;
+        max-width:520px;
+        background:#fff;
+        border-radius:26px;
+        border:1px solid var(--line);
+        box-shadow:0 24px 60px rgba(59,37,42,.24);
+        overflow:hidden;
+      }
+      .mobile-more-head{
+        padding:16px;
+        background:linear-gradient(135deg,#fff,#ffeaf1);
+        display:flex;
+        justify-content:space-between;
+        gap:10px;
+        align-items:center;
+      }
+      .mobile-more-head h3{
+        margin:0;
+        color:var(--brand-dark);
+        font-size:18px;
+      }
+      .mobile-more-head p{
+        margin:4px 0 0;
+        color:var(--muted);
+        font-size:12px;
+      }
+      .mobile-more-list{
+        display:grid;
+        gap:8px;
+        padding:12px;
+        max-height:58dvh;
+        overflow:auto;
+      }
+      .mobile-more-item{
+        width:100%;
+        display:grid;
+        grid-template-columns:42px 1fr auto;
+        gap:10px;
+        align-items:center;
+        text-align:left;
+        background:#fff;
+        color:var(--text);
+        border:1px solid #f1d2dc;
+        box-shadow:none;
+        border-radius:16px;
+        padding:10px;
+      }
+      .mobile-more-item.active{
+        background:#ffeaf1;
+        border-color:#e9b6c5;
+      }
+      .mobile-more-item .nav-icon{
+        width:38px;
+        height:38px;
+        min-width:38px;
+        border-radius:14px;
+      }
+      .mobile-more-item small{
+        display:block;
+        color:var(--muted);
+        font-size:11px;
+        margin-top:2px;
+        font-weight:600;
+        line-height:1.25;
+      }
+    }
+
+    @media(max-width:420px){
+      .topbar{padding:14px;border-radius:20px}
+      .topbar h2{font-size:21px}
+      .mobile-bottom-nav{left:8px;right:8px;bottom:8px;border-radius:22px}
+      .mobile-bottom-btn{font-size:10px;padding:6px 2px}
+      .mobile-bottom-btn .mi{font-size:19px}
+      .guide-step{font-size:12px}
+    }
+
+
     @media print{aside,.actions,.row-actions,.mobile-menu,button,.tabs,.filters{display:none!important}main{padding:0}.card{box-shadow:none}.view{display:block}.view:not(.printable){display:none}.table-wrap{overflow:visible}body{background:white}}
   </style>
 </head>
@@ -480,6 +799,8 @@
           <button onclick="window.print()">Imprimir reporte</button>
         </div>
       </div>
+
+      <div id="sectionGuide" class="section-guide"></div>
 
       <section id="dashboard" class="view active">
         <div class="grid grid-4" id="dashboardMetrics"></div>
@@ -972,6 +1293,129 @@
       {id:'accounting', icon:'📊', label:'Contabilidad', subtitle:'Reportes por lote y ganancias mensuales.'}
     ];
 
+    const guideMeta = {
+      dashboard: {
+        title: 'Vista rápida del negocio',
+        text: 'Aquí revisas de un vistazo qué está pasando con tus ventas: lote activo, dinero recibido, pendientes y cantidad a preparar.',
+        steps: ['Selecciona el lote activo.', 'Revisa la cantidad a preparar.', 'Entra a pedidos o costeo según lo que necesites ajustar.']
+      },
+      batches: {
+        title: 'Organiza cada venta por lote',
+        text: 'Cada flyer o campaña debe tener su propio lote para separar pedidos, gastos, pagos y ganancias.',
+        steps: ['Crea el lote.', 'Define fecha de entrega.', 'Trabaja siempre con el lote activo correcto.']
+      },
+      orders: {
+        title: 'Control de clientes y pagos',
+        text: 'Registra cada cliente, producto, cantidad, abono y estado de entrega. Desde aquí también puedes enviar recordatorios por WhatsApp.',
+        steps: ['Agrega el pedido.', 'Marca pagos o abonos.', 'Filtra pendientes y envía recordatorios.']
+      },
+      products: {
+        title: 'Precios y costos base',
+        text: 'Administra los postres que vendes, su precio final y el costo unitario que luego se conecta con recetas y contabilidad.',
+        steps: ['Crea o edita productos.', 'Actualiza precio de venta.', 'Sincroniza costos desde recetas cuando cambien insumos.']
+      },
+      recipes: {
+        title: 'Recetas, compras y margen',
+        text: 'Actualiza precios de materiales, arma recetas por producto y simula cuánto cuesta fabricar más unidades.',
+        steps: ['Registra materiales con precio real.', 'Crea la receta por producto.', 'Simula cantidades y actualiza el costo unitario.']
+      },
+      expenses: {
+        title: 'Inversión real del lote',
+        text: 'Registra lo que compras para producir: ingredientes, empaques, transporte, publicidad y otros gastos.',
+        steps: ['Agrega cada gasto.', 'Relaciona el gasto con el lote.', 'Revisa la utilidad real en contabilidad.']
+      },
+      accounting: {
+        title: 'Ganancias y decisiones',
+        text: 'Compara ventas, pagos recibidos, inversión y utilidad para saber cuánto ganaste por lote y por mes.',
+        steps: ['Filtra por lote o mes.', 'Revisa total vendido y recibido.', 'Compara inversión contra ganancia.']
+      }
+    };
+
+    const mobilePrimaryNav = [
+      {id:'dashboard', icon:'🏠', label:'Inicio'},
+      {id:'batches', icon:'🧾', label:'Lotes'},
+      {id:'orders', icon:'🛍️', label:'Pedidos'},
+      {id:'recipes', icon:'🧁', label:'Costeo'},
+      {id:'more', icon:'☰', label:'Más'}
+    ];
+
+    function openMobileMorePanel(){
+      const panel = document.getElementById('mobileMorePanel');
+      if(panel){
+        panel.classList.add('show');
+        panel.setAttribute('aria-hidden','false');
+      }
+    }
+
+    function closeMobileMorePanel(){
+      const panel = document.getElementById('mobileMorePanel');
+      if(panel){
+        panel.classList.remove('show');
+        panel.setAttribute('aria-hidden','true');
+      }
+    }
+
+    function renderMobileNavigation(){
+      const bottom = document.getElementById('mobileBottomNav');
+      const moreList = document.getElementById('mobileMoreList');
+      if(bottom){
+        bottom.innerHTML = mobilePrimaryNav.map(item=>`
+          <button class="mobile-bottom-btn" data-mobile-view="${item.id}" type="button" aria-label="${item.label}">
+            <span class="mi">${item.icon}</span>
+            <span>${item.label}</span>
+          </button>
+        `).join('');
+        bottom.onclick = (e)=>{
+          const btn = e.target.closest('[data-mobile-view]');
+          if(!btn) return;
+          const id = btn.dataset.mobileView;
+          if(id === 'more') openMobileMorePanel();
+          else showView(id);
+        };
+      }
+      if(moreList){
+        moreList.innerHTML = navItems.map(item=>`
+          <button class="mobile-more-item" data-more-view="${item.id}" type="button">
+            <span class="nav-icon">${item.icon}</span>
+            <span><strong>${item.label}</strong><small>${item.subtitle}</small></span>
+            <span>›</span>
+          </button>
+        `).join('');
+        moreList.onclick = (e)=>{
+          const btn = e.target.closest('[data-more-view]');
+          if(!btn) return;
+          showView(btn.dataset.moreView);
+          closeMobileMorePanel();
+        };
+      }
+    }
+
+    function updateMobileNavigationState(id){
+      document.querySelectorAll('.mobile-bottom-btn').forEach(btn=>{
+        const target = btn.dataset.mobileView;
+        const active = target === id || (target === 'more' && !mobilePrimaryNav.some(x=>x.id === id));
+        btn.classList.toggle('active', active);
+      });
+      document.querySelectorAll('.mobile-more-item').forEach(btn=>{
+        btn.classList.toggle('active', btn.dataset.moreView === id);
+      });
+    }
+
+    function renderSectionGuide(id){
+      const box = document.getElementById('sectionGuide');
+      if(!box) return;
+      const item = navItems.find(x=>x.id===id);
+      const guide = guideMeta[id] || {title:item?.label || 'Sección', text:item?.subtitle || '', steps:[]};
+      box.innerHTML = `
+        <div class="guide-kicker"><span>${item?.icon || '✨'}</span><strong>${guide.title}</strong></div>
+        <p class="guide-text">${guide.text}</p>
+        <div class="guide-steps">
+          ${(guide.steps || []).map((step,i)=>`<div class="guide-step"><b>${i+1}</b><span>${step}</span></div>`).join('')}
+        </div>
+      `;
+    }
+
+
     let state = loadState();
 
     function defaultState(){
@@ -1132,6 +1576,7 @@
         if(btn) showView(btn.dataset.view);
       });
       mobile.addEventListener('change', e=>showView(e.target.value));
+      renderMobileNavigation();
     }
 
     function showView(id){
@@ -1142,7 +1587,13 @@
       const item = navItems.find(x=>x.id===id);
       document.getElementById('pageTitle').textContent = item.label;
       document.getElementById('pageSubtitle').textContent = item.subtitle;
+      renderSectionGuide(id);
+      updateMobileNavigationState(id);
+      closeMobileMorePanel();
       renderAll();
+      if(window.matchMedia && window.matchMedia('(max-width: 760px)').matches){
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
     }
 
     function statusPill(value, type='batch'){
@@ -1657,7 +2108,7 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     function init(){
       setupNav();
       batchOpen.value=today(); batchDelivery.value=today(); orderDate.value=today(); expenseDate.value=today(); materialUpdatedAt.value=today(); reportMonth.value=monthNow();
-      fillSelects(); resetOrderForm(); resetExpenseForm(); resetMaterialForm(); resetRecipeForm(); renderAll();
+      fillSelects(); resetOrderForm(); resetExpenseForm(); resetMaterialForm(); resetRecipeForm(); renderSectionGuide('dashboard'); updateMobileNavigationState('dashboard'); renderAll();
     }
     init();
   </script>
