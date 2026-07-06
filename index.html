@@ -1007,6 +1007,230 @@
     }
 
 
+
+    .cloud-status{
+      margin:0 0 14px;
+      padding:9px 11px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+      line-height:1.25;
+      white-space:normal;
+    }
+    .cloud-status.ok{
+      background:#f4fff8;
+      border-color:#bde4cc;
+      color:#2e7d54;
+    }
+    .cloud-status.saving,.cloud-status.sync{
+      background:#fff8e8;
+      border-color:#efd99d;
+      color:#94620f;
+    }
+    .cloud-status.error{
+      background:#fff1f1;
+      border-color:#efb9b9;
+      color:#b54747;
+    }
+    @media(min-width:761px){
+      aside:not(:hover):not(:focus-within) .cloud-status{
+        opacity:0;
+        height:0;
+        padding:0;
+        margin:0;
+        overflow:hidden;
+        border:0;
+      }
+    }
+    @media(max-width:760px){
+      .cloud-status{
+        margin:8px 0 8px;
+        text-align:center;
+        font-size:11px;
+        padding:7px 9px;
+      }
+    }
+
+
+
+    /* ===== Corrección menú móvil "Más" con scroll interno ===== */
+    @media(max-width:760px){
+      body.mobile-more-open{
+        overflow:hidden;
+        touch-action:none;
+      }
+
+      .mobile-more-backdrop{
+        padding:12px 10px calc(var(--bottom-nav-height) + 18px + env(safe-area-inset-bottom))!important;
+        align-items:flex-end!important;
+        overflow:hidden!important;
+      }
+
+      .mobile-more-sheet{
+        width:100%!important;
+        max-width:520px!important;
+        max-height:calc(100dvh - var(--bottom-nav-height) - 34px - env(safe-area-inset-bottom))!important;
+        height:auto!important;
+        display:flex!important;
+        flex-direction:column!important;
+        overflow:hidden!important;
+        border-radius:24px!important;
+      }
+
+      .mobile-more-head{
+        flex:0 0 auto!important;
+        position:sticky!important;
+        top:0!important;
+        z-index:3!important;
+      }
+
+      .mobile-more-list{
+        flex:1 1 auto!important;
+        min-height:0!important;
+        max-height:none!important;
+        overflow-y:auto!important;
+        overscroll-behavior:contain!important;
+        -webkit-overflow-scrolling:touch!important;
+        padding:10px 12px 12px!important;
+      }
+
+      .mobile-more-tools{
+        flex:0 0 auto!important;
+        position:sticky!important;
+        bottom:0!important;
+        z-index:3!important;
+        background:linear-gradient(180deg,rgba(255,250,253,.92),#fff)!important;
+        box-shadow:0 -10px 24px rgba(91,48,47,.08)!important;
+      }
+
+      .mobile-more-item{
+        min-height:72px!important;
+      }
+
+      .mobile-more-list::after{
+        content:"";
+        display:block;
+        height:6px;
+      }
+    }
+
+    @media(max-height:690px) and (max-width:760px){
+      .mobile-more-sheet{
+        max-height:calc(100dvh - var(--bottom-nav-height) - 22px - env(safe-area-inset-bottom))!important;
+      }
+      .mobile-more-item{
+        min-height:62px!important;
+        padding:8px 10px!important;
+      }
+      .mobile-more-head{
+        padding:12px 14px!important;
+      }
+      .mobile-more-tools{
+        padding:10px 12px!important;
+      }
+      .mobile-more-tools button{
+        min-height:38px!important;
+      }
+    }
+
+
+
+    /* ===== Herramientas discretas en menú móvil ===== */
+    .mobile-more-tools{
+      margin:0 12px 12px;
+      border:1px dashed #e9b6c5;
+      border-radius:18px;
+      background:#fffafd;
+      overflow:hidden;
+    }
+    .mobile-more-tools summary{
+      list-style:none;
+      cursor:pointer;
+      display:grid;
+      grid-template-columns:34px 1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:11px 12px;
+      color:var(--brand-dark);
+    }
+    .mobile-more-tools summary::-webkit-details-marker{display:none}
+    .mobile-more-tools summary span{
+      width:34px;
+      height:34px;
+      border-radius:13px;
+      background:#ffeaf1;
+      display:grid;
+      place-items:center;
+      font-size:17px;
+    }
+    .mobile-more-tools summary strong{
+      font-size:13.5px;
+      line-height:1.1;
+    }
+    .mobile-more-tools summary small{
+      color:var(--muted);
+      font-size:10.5px;
+      font-weight:800;
+      text-align:right;
+    }
+    .mobile-tools-actions{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:7px;
+      padding:0 10px 10px;
+    }
+    .mobile-tools-actions .soft-tool{
+      min-height:36px!important;
+      padding:8px 6px!important;
+      border-radius:12px!important;
+      font-size:11px!important;
+      box-shadow:none!important;
+      background:#fff!important;
+      color:var(--brand-dark)!important;
+      border:1px solid #efd1da!important;
+      font-weight:900!important;
+    }
+    .mobile-tools-actions .soft-tool:hover{
+      background:#ffeaf1!important;
+    }
+
+    @media(max-width:760px){
+      .mobile-more-tools{
+        flex:0 0 auto!important;
+        position:static!important;
+        bottom:auto!important;
+        z-index:auto!important;
+        box-shadow:none!important;
+      }
+    }
+
+    @media(max-width:360px){
+      .mobile-tools-actions{
+        grid-template-columns:1fr;
+      }
+    }
+
+
+
+    @media(max-width:760px){
+      .mobile-more-sheet{
+        display:flex!important;
+        flex-direction:column!important;
+      }
+      .mobile-more-list{
+        padding-bottom:8px!important;
+      }
+      .mobile-more-tools{
+        background:#fffafd!important;
+      }
+      .mobile-more-tools button{
+        width:100%;
+      }
+    }
+
     @media print{aside,.actions,.row-actions,.mobile-menu,button,.tabs,.filters{display:none!important}main{padding:0}.card{box-shadow:none}.view{display:block}.view:not(.printable){display:none}.table-wrap{overflow:visible}body{background:white}}
   </style>
 </head>
@@ -1020,6 +1244,7 @@
           <p>Postres por encargo</p>
         </div>
       </div>
+      <div id="cloudStatus" class="cloud-status sync">Conectando con la nube…</div>
       <select id="mobileNav" class="mobile-menu"></select>
       <nav class="desktop-nav" id="nav"></nav>
       <div class="side-note">
@@ -1577,20 +1802,72 @@
       <div class="mobile-more-head">
         <div>
           <h3>Más secciones</h3>
-          <p>Accede a productos, gastos, contabilidad y herramientas.</p>
+          <p>Desliza la lista para ver todas las secciones.</p>
         </div>
         <button class="modal-close" onclick="closeMobileMorePanel()" type="button">×</button>
       </div>
       <div id="mobileMoreList" class="mobile-more-list"></div>
-      <div class="mobile-more-tools">
-        <button class="secondary" onclick="exportJSON(); closeMobileMorePanel();" type="button">Exportar copia</button>
-        <button class="secondary" onclick="document.getElementById('importFile').click(); closeMobileMorePanel();" type="button">Importar copia</button>
-        <button onclick="window.print(); closeMobileMorePanel();" type="button">Imprimir reporte</button>
-      </div>
+      <details class="mobile-more-tools">
+        <summary>
+          <span>⚙️</span>
+          <strong>Herramientas del sistema</strong>
+          <small>Copias y reportes</small>
+        </summary>
+        <div class="mobile-tools-actions">
+          <button class="secondary soft-tool" onclick="exportJSON(); closeMobileMorePanel();" type="button">Exportar</button>
+          <button class="secondary soft-tool" onclick="document.getElementById('importFile').click(); closeMobileMorePanel();" type="button">Importar</button>
+          <button class="secondary soft-tool" onclick="window.print(); closeMobileMorePanel();" type="button">Imprimir</button>
+        </div>
+      </details>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-analytics.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      onSnapshot,
+      serverTimestamp,
+      enableIndexedDbPersistence
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUAbmXvCuS65YOMKaLakzlATT0CBpxiNQ",
+      authDomain: "dulce-antojo-3c160.firebaseapp.com",
+      projectId: "dulce-antojo-3c160",
+      storageBucket: "dulce-antojo-3c160.firebasestorage.app",
+      messagingSenderId: "333354802147",
+      appId: "1:333354802147:web:4e7e86c843abf95742ded6",
+      measurementId: "G-7QNB3PT9YE"
+    };
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getFirestore(firebaseApp);
+    const appDataRef = doc(db, "dulce_antojo_app", "estado_general");
+
+    analyticsIsSupported()
+      .then((supported) => {
+        if (supported) getAnalytics(firebaseApp);
+      })
+      .catch(() => {});
+
+    enableIndexedDbPersistence(db).catch(() => {
+      // Si hay varias pestañas abiertas, Firebase puede desactivar la persistencia local.
+      // La sincronización en tiempo real sigue funcionando.
+    });
+
+    let firebaseReady = false;
+    let cloudListening = false;
+    let applyingRemoteState = false;
+    let pendingCloudSave = null;
+    let lastCloudPayload = "";
+
+
     const STORAGE_KEY = 'unDulceAntojoV1';
     const today = () => new Date().toISOString().slice(0,10);
     const monthNow = () => new Date().toISOString().slice(0,7);
@@ -1659,6 +1936,11 @@
       if(panel){
         panel.classList.add('show');
         panel.setAttribute('aria-hidden','false');
+        document.body.classList.add('mobile-more-open');
+        setTimeout(()=>{
+          const list = document.getElementById('mobileMoreList');
+          if(list) list.scrollTop = 0;
+        }, 30);
       }
     }
 
@@ -1667,6 +1949,7 @@
       if(panel){
         panel.classList.remove('show');
         panel.setAttribute('aria-hidden','true');
+        document.body.classList.remove('mobile-more-open');
       }
     }
 
@@ -1829,7 +2112,104 @@
         return normalizeState(defaultState());
       }
     }
-    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function save(){
+      const normalized = normalizeState(state);
+      state = normalized;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      queueCloudSave();
+    }
+
+    function updateCloudStatus(text, mode='sync'){
+      const el = document.getElementById('cloudStatus');
+      if(!el) return;
+      el.textContent = text;
+      el.className = `cloud-status ${mode}`;
+    }
+
+    function cleanStateForCloud(data){
+      const copy = normalizeState(JSON.parse(JSON.stringify(data || defaultState())));
+      delete copy.__updatedAt;
+      return copy;
+    }
+
+    function queueCloudSave(){
+      if(!firebaseReady || applyingRemoteState) return;
+      clearTimeout(pendingCloudSave);
+      pendingCloudSave = setTimeout(saveStateToCloud, 650);
+    }
+
+    async function saveStateToCloud(){
+      if(!firebaseReady || applyingRemoteState) return;
+      const payload = cleanStateForCloud(state);
+      const serialized = JSON.stringify(payload);
+      if(serialized === lastCloudPayload) return;
+
+      updateCloudStatus('Guardando en la nube…', 'saving');
+      try{
+        await setDoc(appDataRef, {
+          state: payload,
+          updatedAt: serverTimestamp(),
+          deviceUpdatedAt: new Date().toISOString()
+        }, { merge:true });
+        lastCloudPayload = serialized;
+        updateCloudStatus('Sincronizado en la nube', 'ok');
+      }catch(error){
+        console.error('Error guardando en Firebase:', error);
+        updateCloudStatus('Sin conexión a la nube. Guardado local.', 'error');
+      }
+    }
+
+    async function startCloudSync(){
+      updateCloudStatus('Conectando con Firebase…', 'sync');
+
+      try{
+        const snap = await getDoc(appDataRef);
+        if(snap.exists() && snap.data()?.state){
+          applyingRemoteState = true;
+          state = normalizeState(snap.data().state);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          lastCloudPayload = JSON.stringify(cleanStateForCloud(state));
+          renderAll();
+          applyingRemoteState = false;
+          updateCloudStatus('Datos cargados desde la nube', 'ok');
+        }else{
+          await setDoc(appDataRef, {
+            state: cleanStateForCloud(state),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            deviceUpdatedAt: new Date().toISOString()
+          }, { merge:true });
+          lastCloudPayload = JSON.stringify(cleanStateForCloud(state));
+          updateCloudStatus('Base de datos creada en la nube', 'ok');
+        }
+      }catch(error){
+        console.error('Error inicializando Firebase:', error);
+        updateCloudStatus('Modo local. Revisa internet o reglas de Firestore.', 'error');
+      }
+
+      if(cloudListening) return;
+      cloudListening = true;
+
+      onSnapshot(appDataRef, (snapshot)=>{
+        if(!snapshot.exists() || !snapshot.data()?.state) return;
+
+        const incoming = normalizeState(snapshot.data().state);
+        const incomingPayload = JSON.stringify(cleanStateForCloud(incoming));
+
+        if(incomingPayload === lastCloudPayload) return;
+
+        applyingRemoteState = true;
+        state = incoming;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        lastCloudPayload = incomingPayload;
+        renderAll();
+        applyingRemoteState = false;
+        updateCloudStatus('Actualizado en tiempo real', 'ok');
+      }, (error)=>{
+        console.error('Error escuchando Firebase:', error);
+        updateCloudStatus('Sin conexión en tiempo real', 'error');
+      });
+    }
     function toast(msg){
       const el = document.getElementById('toast');
       el.textContent = msg; el.classList.add('show');
@@ -2481,10 +2861,44 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       return String(str ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
     }
 
+
+    Object.assign(window, {
+      showView,
+      exportJSON,
+      openBatchModal,
+      openProductModal,
+      openOrderModal,
+      openExpenseModal,
+      openMaterialModal,
+      openRecipeModal,
+      closeModals,
+      backdropClose,
+      closeMobileMorePanel,
+      openMobileMorePanel,
+      setActiveBatch,
+      changeBatchStatus,
+      deleteBatch,
+      editProduct,
+      showRecipeFor,
+      deleteProduct,
+      editOrder,
+      payOrder,
+      sendPaymentReminder,
+      toggleDelivery,
+      deleteOrder,
+      editExpense,
+      deleteExpense,
+      editMaterial,
+      deleteMaterial,
+      editRecipeItem,
+      deleteRecipeItem,
+      syncSelectedRecipeCost
+    });
+
     function init(){
       setupNav();
       batchOpen.value=today(); batchDelivery.value=today(); orderDate.value=today(); expenseDate.value=today(); materialUpdatedAt.value=today(); reportMonth.value=monthNow();
-      document.body.dataset.view = 'dashboard'; fillSelects(); resetOrderForm(); resetExpenseForm(); resetMaterialForm(); resetRecipeForm(); renderMobileNavigation(); renderSectionGuide('dashboard'); updateMobileNavigationState('dashboard'); renderAll();
+      document.body.dataset.view = 'dashboard'; fillSelects(); resetOrderForm(); resetExpenseForm(); resetMaterialForm(); resetRecipeForm(); renderMobileNavigation(); renderSectionGuide('dashboard'); updateMobileNavigationState('dashboard'); renderAll(); firebaseReady = true; startCloudSync();
     }
     init();
   </script>
