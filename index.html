@@ -765,6 +765,248 @@
     }
 
 
+
+    /* ===== Corrección panel principal móvil V5 ===== */
+    .dashboard-action-strip{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      margin-bottom:16px;
+    }
+    .dashboard-action-strip button{min-height:44px}
+    .dashboard-help-text{
+      margin:12px 0 0;
+      color:var(--muted);
+      line-height:1.45;
+      font-size:13px;
+      background:#fff7fb;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+    .dashboard-batch-buttons{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+    .dashboard-card-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .dashboard-card-head h3{
+      margin:0;
+      color:var(--brand-dark);
+      font-size:19px;
+    }
+    .dashboard-card-head p{
+      margin:5px 0 0;
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.35;
+    }
+    .dashboard-icon{
+      width:42px;
+      height:42px;
+      min-width:42px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:#ffeaf1;
+      font-size:20px;
+    }
+    .dashboard-alerts{
+      display:grid;
+      gap:10px;
+      margin:14px 0;
+    }
+    .dashboard-alert-card{
+      background:#fff;
+      border:1px solid #f0ccd8;
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 12px 28px rgba(91,48,47,.07);
+      display:grid;
+      gap:10px;
+    }
+    .dashboard-alert-card.warning{
+      background:linear-gradient(135deg,#fff,#fff6e6);
+      border-color:#efd99d;
+    }
+    .dashboard-alert-card.ok{
+      background:linear-gradient(135deg,#fff,#f4fff8);
+      border-color:#bde4cc;
+    }
+    .dashboard-alert-card strong{
+      color:var(--brand-dark);
+      font-size:16px;
+    }
+    .dashboard-alert-card p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.35;
+      font-size:13px;
+    }
+    .dashboard-product-list{
+      display:grid;
+      gap:10px;
+    }
+    .dashboard-product-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding:12px;
+      border:1px solid #f1d2dc;
+      border-radius:16px;
+      background:#fffafd;
+    }
+    .dashboard-product-item strong{
+      color:var(--brand-dark);
+    }
+    .dashboard-product-item small{
+      display:block;
+      color:var(--muted);
+      margin-top:3px;
+    }
+    .dashboard-product-item b{
+      color:var(--brand-dark);
+      text-align:right;
+    }
+    .dashboard-route{
+      background:#fff;
+      border:1px dashed #e9b6c5;
+      border-radius:18px;
+      padding:12px 14px;
+      margin:14px 0;
+      color:var(--text);
+    }
+    .dashboard-route summary{
+      cursor:pointer;
+      font-weight:900;
+      color:var(--brand-dark);
+    }
+    .dashboard-route ol{
+      margin:12px 0 0 20px;
+      padding:0;
+      color:var(--muted);
+      line-height:1.55;
+    }
+    .mobile-more-tools{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      padding:12px;
+      border-top:1px solid var(--line);
+      background:#fffafd;
+    }
+    .mobile-more-tools button{
+      width:100%;
+      min-height:42px;
+    }
+
+    @media(max-width:760px){
+      body[data-view="dashboard"] .section-guide{
+        display:none!important;
+      }
+      .topbar .actions{
+        display:none!important;
+      }
+      .topbar{
+        padding:14px 16px!important;
+        margin-bottom:12px!important;
+      }
+      .topbar h2{
+        font-size:22px!important;
+      }
+      .topbar p{
+        font-size:13px!important;
+      }
+      .dashboard-action-strip{
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+        margin-bottom:12px;
+      }
+      .dashboard-action-strip button{
+        min-height:42px;
+        padding:10px 8px;
+        font-size:12px;
+        border-radius:13px;
+        box-shadow:0 8px 18px rgba(231,155,178,.18);
+      }
+      .dashboard-action-strip button:nth-child(n+3){
+        display:none;
+      }
+      .dashboard-first-title{
+        margin-top:10px!important;
+      }
+      .dashboard-active-batch-card{
+        padding:14px!important;
+        border-radius:18px!important;
+      }
+      .dashboard-batch-buttons{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+      }
+      .dashboard-batch-buttons button{
+        width:100%;
+        min-height:42px;
+        padding:10px 8px;
+      }
+      #dashboardMetrics.dashboard-metrics-grid{
+        display:grid!important;
+        grid-template-columns:repeat(2,minmax(0,1fr))!important;
+        gap:10px!important;
+        margin:12px 0!important;
+      }
+      #dashboardMetrics .metric{
+        min-height:112px!important;
+        padding:13px!important;
+        border-radius:18px!important;
+        gap:6px!important;
+      }
+      #dashboardMetrics .metric small{
+        font-size:11px!important;
+        line-height:1.2;
+      }
+      #dashboardMetrics .metric strong{
+        font-size:22px!important;
+        line-height:1.1;
+      }
+      #dashboardMetrics .metric span{
+        font-size:10.5px!important;
+        line-height:1.25;
+      }
+      .dashboard-card-head h3{
+        font-size:18px;
+      }
+      .dashboard-products-card,
+      .dashboard-month-card,
+      .dashboard-prepare-card{
+        padding:14px!important;
+        border-radius:18px!important;
+      }
+      .dashboard-pending-title h3{
+        font-size:17px!important;
+      }
+      .dashboard-pending-title{
+        margin-top:18px!important;
+      }
+      .dashboard-product-item{
+        padding:11px;
+      }
+    }
+
+    @media(max-width:380px){
+      #dashboardMetrics.dashboard-metrics-grid{
+        grid-template-columns:1fr!important;
+      }
+    }
+
+
     @media print{aside,.actions,.row-actions,.mobile-menu,button,.tabs,.filters{display:none!important}main{padding:0}.card{box-shadow:none}.view{display:block}.view:not(.printable){display:none}.table-wrap{overflow:visible}body{background:white}}
   </style>
 </head>
@@ -803,29 +1045,81 @@
       <div id="sectionGuide" class="section-guide"></div>
 
       <section id="dashboard" class="view active">
-        <div class="grid grid-4" id="dashboardMetrics"></div>
+        <div class="dashboard-action-strip">
+          <button onclick="openOrderModal()" type="button">+ Nuevo pedido</button>
+          <button class="secondary" onclick="openBatchModal()" type="button">+ Nuevo lote</button>
+          <button class="secondary" onclick="openExpenseModal()" type="button">Registrar gasto</button>
+          <button class="secondary" onclick="showView('recipes')" type="button">Calcular producción</button>
+        </div>
 
-        <div class="section-title">
+        <div class="section-title dashboard-first-title">
           <h3>Lote activo</h3>
           <span class="badge-total" id="activeBatchLabel"></span>
         </div>
-        <div class="grid grid-2">
-          <div class="card">
-            <label>Selecciona lote para trabajar
-              <select id="activeBatchSelect"></select>
-            </label>
-            <div class="notice" style="margin-top:12px">
-              Todo pedido, gasto y reporte puede filtrarse por el lote que tengas activo. Así podrás saber exactamente cuántos postres debes preparar y quiénes pagaron.
-            </div>
-          </div>
-          <div class="card">
-            <h3 style="margin-top:0;color:var(--brand-dark)">Cantidad a preparar</h3>
-            <div id="prepareSummary" class="summary-list"></div>
+
+        <div class="card dashboard-active-batch-card">
+          <label>Selecciona lote para trabajar
+            <select id="activeBatchSelect"></select>
+          </label>
+          <p class="dashboard-help-text">
+            Todo pedido, gasto y reporte se relaciona con este lote. Así sabes cuánto preparar, cuánto vendiste y quién falta por pagar.
+          </p>
+          <div class="dashboard-batch-buttons">
+            <button onclick="openOrderModal()" type="button">Agregar pedido</button>
+            <button class="secondary" onclick="showView('orders')" type="button">Ver pedidos</button>
           </div>
         </div>
 
-        <div class="section-title">
-          <h3>Pedidos pendientes de pago del lote activo</h3>
+        <div class="grid grid-4 dashboard-metrics-grid" id="dashboardMetrics"></div>
+
+        <div class="card dashboard-prepare-card">
+          <div class="dashboard-card-head">
+            <div>
+              <h3>Cantidad a preparar</h3>
+              <p>Resumen del lote activo por producto.</p>
+            </div>
+            <span class="dashboard-icon">🧁</span>
+          </div>
+          <div id="prepareSummary" class="summary-list"></div>
+        </div>
+
+        <div class="dashboard-alerts" id="dashboardAlerts"></div>
+
+        <div class="card dashboard-products-card">
+          <div class="dashboard-card-head">
+            <div>
+              <h3>Productos vendidos</h3>
+              <p>Detalle rápido de lo encargado en el lote activo.</p>
+            </div>
+            <span class="dashboard-icon">🍰</span>
+          </div>
+          <div id="dashboardProductSummary" class="dashboard-product-list"></div>
+        </div>
+
+        <div class="card dashboard-month-card">
+          <div class="dashboard-card-head">
+            <div>
+              <h3>Resumen del mes</h3>
+              <p>Ventas, dinero recibido, inversión y ganancia mensual.</p>
+            </div>
+            <span class="dashboard-icon">📊</span>
+          </div>
+          <div id="dashboardMonthSummary" class="summary-list"></div>
+        </div>
+
+        <details class="dashboard-route">
+          <summary>Ver ruta recomendada de uso</summary>
+          <ol>
+            <li>Crea o selecciona el lote activo.</li>
+            <li>Registra los pedidos de tus clientes.</li>
+            <li>Marca pagos, abonos y entregas.</li>
+            <li>Registra gastos e inversión.</li>
+            <li>Revisa cantidad a preparar y ganancia.</li>
+          </ol>
+        </details>
+
+        <div class="section-title dashboard-pending-title">
+          <h3>Pedidos pendientes de pago</h3>
           <span class="badge-total" id="pendingCount"></span>
         </div>
         <div id="pendingPreview"></div>
@@ -1275,6 +1569,27 @@
 
   <div class="toast" id="toast"></div>
 
+  
+  <nav id="mobileBottomNav" class="mobile-bottom-nav" aria-label="Navegación principal móvil"></nav>
+
+  <div id="mobileMorePanel" class="mobile-more-backdrop" aria-hidden="true" onclick="if(event.target===this) closeMobileMorePanel()">
+    <div class="mobile-more-sheet" role="dialog" aria-modal="true" aria-label="Más secciones">
+      <div class="mobile-more-head">
+        <div>
+          <h3>Más secciones</h3>
+          <p>Accede a productos, gastos, contabilidad y herramientas.</p>
+        </div>
+        <button class="modal-close" onclick="closeMobileMorePanel()" type="button">×</button>
+      </div>
+      <div id="mobileMoreList" class="mobile-more-list"></div>
+      <div class="mobile-more-tools">
+        <button class="secondary" onclick="exportJSON(); closeMobileMorePanel();" type="button">Exportar copia</button>
+        <button class="secondary" onclick="document.getElementById('importFile').click(); closeMobileMorePanel();" type="button">Importar copia</button>
+        <button onclick="window.print(); closeMobileMorePanel();" type="button">Imprimir reporte</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = 'unDulceAntojoV1';
     const today = () => new Date().toISOString().slice(0,10);
@@ -1404,6 +1719,10 @@
     function renderSectionGuide(id){
       const box = document.getElementById('sectionGuide');
       if(!box) return;
+      if(id === 'dashboard'){
+        box.innerHTML = '';
+        return;
+      }
       const item = navItems.find(x=>x.id===id);
       const guide = guideMeta[id] || {title:item?.label || 'Sección', text:item?.subtitle || '', steps:[]};
       box.innerHTML = `
@@ -1580,6 +1899,7 @@
     }
 
     function showView(id){
+      document.body.dataset.view = id;
       document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===id));
@@ -1738,23 +2058,79 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       if(!batch){
         document.getElementById('dashboardMetrics').innerHTML = '';
         document.getElementById('prepareSummary').innerHTML = '<div class="empty">Crea tu primer lote para comenzar.</div>';
+        const alerts = document.getElementById('dashboardAlerts');
+        if(alerts) alerts.innerHTML = '';
+        const productSummary = document.getElementById('dashboardProductSummary');
+        if(productSummary) productSummary.innerHTML = '<div class="empty">Sin productos vendidos todavía.</div>';
+        const monthSummary = document.getElementById('dashboardMonthSummary');
+        if(monthSummary) monthSummary.innerHTML = '<div class="empty">Sin información mensual todavía.</div>';
         return;
       }
+
       const orders = ordersForBatch(batch.id);
       const expenses = expensesForBatch(batch.id);
       const s = summarize(orders, expenses);
+
       document.getElementById('dashboardMetrics').innerHTML = [
-        ['Total vendido', money(s.totalSold), 'Valor total de pedidos del lote activo'],
-        ['Dinero recibido', money(s.totalReceived), 'Pagos completos y abonos recibidos'],
-        ['Pendiente por cobrar', money(s.totalPending), 'Clientes que aún deben'],
-        ['Ganancia estimada', money(s.estimatedProfit), 'Ventas menos inversión total']
+        ['Total vendido', money(s.totalSold), 'Pedidos del lote activo'],
+        ['Recibido', money(s.totalReceived), 'Pagos y abonos'],
+        ['Pendiente', money(s.totalPending), 'Saldo por cobrar'],
+        ['Ganancia', money(s.estimatedProfit), 'Venta menos inversión']
       ].map(m=>`<div class="card metric"><small>${m[0]}</small><strong>${m[1]}</strong><span>${m[2]}</span></div>`).join('');
+
       document.getElementById('activeBatchLabel').innerHTML = `${batch.code} · ${statusPill(batch.status)}`;
+
       const products = groupProducts(orders);
-      document.getElementById('prepareSummary').innerHTML = products.length ? products.map(p=>`<div class="summary-row"><span>${escapeHTML(p.name)}<span class="mini">Vendido: ${money(p.sold)}</span></span><strong>${p.qty} unidades</strong></div>`).join('') + `<div class="summary-row total-line"><span>Total a preparar</span><strong>${s.units} unidades</strong></div><div class="summary-row total-line"><span>Total vendido del lote</span><strong>${money(s.totalSold)}</strong></div>` : '<div class="empty">Aún no hay pedidos en este lote.</div>';
+      document.getElementById('prepareSummary').innerHTML = products.length
+        ? products.map(p=>`<div class="summary-row"><span>${escapeHTML(p.name)}<span class="mini">Vendido: ${money(p.sold)}</span></span><strong>${p.qty} unidades</strong></div>`).join('') +
+          `<div class="summary-row total-line"><span>Total a preparar</span><strong>${s.units} unidades</strong></div><div class="summary-row total-line"><span>Total vendido del lote</span><strong>${money(s.totalSold)}</strong></div>`
+        : '<div class="empty">Aún no hay pedidos en este lote.</div>';
+
       const pending = orders.filter(o=>saldo(o)>0);
       document.getElementById('pendingCount').textContent = `${pending.length} clientes pendientes`;
-      document.getElementById('pendingPreview').innerHTML = pending.length ? renderOrderMiniTable(pending.slice(0,8)) : '<div class="empty">Muy bien: no hay pagos pendientes en este lote.</div>';
+      document.getElementById('pendingPreview').innerHTML = pending.length
+        ? renderOrderMiniTable(pending.slice(0,8))
+        : '<div class="empty">Muy bien: no hay pagos pendientes en este lote.</div>';
+
+      const alerts = document.getElementById('dashboardAlerts');
+      if(alerts){
+        const noPhone = orders.filter(o=>saldo(o)>0 && !String(o.phone||'').trim()).length;
+        const cards = [];
+        if(pending.length){
+          cards.push(`<div class="dashboard-alert-card warning"><strong>Hay ${pending.length} cliente${pending.length===1?'':'s'} pendiente${pending.length===1?'':'s'} de pago</strong><p>Saldo total por cobrar: ${money(s.totalPending)}. Puedes enviar recordatorios desde la tabla de pendientes.</p><button class="whatsapp" onclick="showView('orders')" type="button">Ver pedidos y cobrar</button></div>`);
+        }else{
+          cards.push(`<div class="dashboard-alert-card ok"><strong>Pagos al día en este lote</strong><p>No tienes saldos pendientes registrados en el lote activo.</p></div>`);
+        }
+        if(noPhone){
+          cards.push(`<div class="dashboard-alert-card warning"><strong>${noPhone} pendiente${noPhone===1?'':'s'} sin teléfono</strong><p>Agrega el número para poder enviar recordatorios por WhatsApp.</p></div>`);
+        }
+        if(s.extraExpenses <= 0){
+          cards.push(`<div class="dashboard-alert-card warning"><strong>Inversión del lote sin gastos registrados</strong><p>Registra ingredientes, empaques, domicilios o publicidad para calcular mejor la ganancia.</p><button class="secondary" onclick="openExpenseModal()" type="button">Registrar gasto</button></div>`);
+        }
+        alerts.innerHTML = cards.join('');
+      }
+
+      const productSummary = document.getElementById('dashboardProductSummary');
+      if(productSummary){
+        productSummary.innerHTML = products.length
+          ? products.map(p=>`<div class="dashboard-product-item"><span><strong>${escapeHTML(p.name)}</strong><small>${money(p.sold)} vendidos</small></span><b>${p.qty} und.</b></div>`).join('')
+          : '<div class="empty">Cuando registres pedidos, aquí verás cuánto se vendió de cada producto.</div>';
+      }
+
+      const month = monthNow();
+      const monthOrders = monthFilter(state.orders, 'createdAt', month);
+      const monthExpenses = monthFilter(state.expenses, 'date', month);
+      const monthSummaryData = summarize(monthOrders, monthExpenses);
+      const monthBatches = state.batches.filter(b => String(b.openDate||'').slice(0,7) === month || monthOrders.some(o=>o.batchId===b.id)).length;
+      const monthSummary = document.getElementById('dashboardMonthSummary');
+      if(monthSummary){
+        monthSummary.innerHTML = `<div class="summary-row"><span>Lotes del mes</span><strong>${monthBatches}</strong></div>
+        <div class="summary-row"><span>Ventas del mes</span><strong>${money(monthSummaryData.totalSold)}</strong></div>
+        <div class="summary-row"><span>Dinero recibido</span><strong>${money(monthSummaryData.totalReceived)}</strong></div>
+        <div class="summary-row"><span>Pendiente</span><strong>${money(monthSummaryData.totalPending)}</strong></div>
+        <div class="summary-row"><span>Inversión</span><strong>${money(monthSummaryData.investment)}</strong></div>
+        <div class="summary-row total-line"><span>Ganancia del mes</span><strong>${money(monthSummaryData.estimatedProfit)}</strong></div>`;
+      }
     }
 
     function renderOrderMiniTable(list){
@@ -2108,7 +2484,7 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     function init(){
       setupNav();
       batchOpen.value=today(); batchDelivery.value=today(); orderDate.value=today(); expenseDate.value=today(); materialUpdatedAt.value=today(); reportMonth.value=monthNow();
-      fillSelects(); resetOrderForm(); resetExpenseForm(); resetMaterialForm(); resetRecipeForm(); renderSectionGuide('dashboard'); updateMobileNavigationState('dashboard'); renderAll();
+      document.body.dataset.view = 'dashboard'; fillSelects(); resetOrderForm(); resetExpenseForm(); resetMaterialForm(); resetRecipeForm(); renderMobileNavigation(); renderSectionGuide('dashboard'); updateMobileNavigationState('dashboard'); renderAll();
     }
     init();
   </script>
