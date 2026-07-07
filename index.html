@@ -1471,6 +1471,88 @@
     .measurement-helper{color:var(--muted);font-size:11px;line-height:1.3;margin-top:2px}
     @media(max-width:760px){.recipe-status-panel{grid-template-columns:1fr}}
 
+
+    /* ===== Costeo por tanda ===== */
+    .production-cost-card{margin-bottom:16px}
+    .production-qty-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin:14px 0;
+    }
+    .production-qty-item{
+      background:#fffafd;
+      border:1px solid #f1d2dc;
+      border-radius:16px;
+      padding:12px;
+      display:grid;
+      gap:8px;
+    }
+    .production-qty-item strong{color:var(--brand-dark)}
+    .production-qty-item small{color:var(--muted)}
+    .production-qty-item input{font-size:16px;font-weight:900}
+    .production-summary-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .production-summary-card{
+      background:#fff;
+      border:1px solid #f0ccd8;
+      border-radius:16px;
+      padding:13px;
+      box-shadow:0 8px 18px rgba(91,48,47,.06);
+    }
+    .production-summary-card.highlight{
+      background:linear-gradient(135deg,#fff,#ffeaf1);
+      border-color:#e9b6c5;
+    }
+    .production-summary-card small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+    .production-summary-card strong{
+      display:block;
+      margin-top:6px;
+      color:var(--brand-dark);
+      font-size:18px;
+    }
+    .production-summary-card span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.25;
+    }
+    .production-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .production-purchase-row{
+      grid-template-columns:1.45fr 1.35fr .9fr 1fr auto!important;
+    }
+    .production-purchase-legend{
+      grid-template-columns:1.45fr 1.35fr .9fr 1fr!important;
+    }
+    @media(max-width:900px){
+      .production-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:760px){
+      .production-qty-grid,.production-summary-grid{grid-template-columns:1fr}
+      .production-actions{display:grid;grid-template-columns:1fr}
+      .production-actions button{width:100%}
+      .production-purchase-row{grid-template-columns:1fr!important}
+      .production-purchase-legend{display:none!important}
+    }
+
+
     @media print{aside,.actions,.row-actions,.mobile-menu,button,.tabs,.filters{display:none!important}main{padding:0}.card{box-shadow:none}.view{display:block}.view:not(.printable){display:none}.table-wrap{overflow:visible}body{background:white}}
   </style>
 </head>
@@ -1666,38 +1748,61 @@
       <section id="recipes" class="view">
         <div class="table-actions-bar">
           <div>
-            <h3>Recetas y costeo por producto</h3>
-            <p>Primero registra los ingredientes que compras con cantidad y costo. Cuando tengas las medidas, agrega cuánto usa cada producto para calcular inversión.</p>
+            <h3>Recetas y costeo por tanda</h3>
+            <p>Registra lo que compraste para una tanda completa, cuántos postres salieron y calcula inversión, ventas y ganancia.</p>
           </div>
           <div class="recipe-actions">
-            <button onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Registrar ingredientes</button>
-            <button class="secondary" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Agregar medidas</button>
-            <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Calcular costo final</button>
+            <button onclick="openProductionPurchaseModal()">Registrar compras de la tanda</button>
+            <button class="secondary" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Agregar dosis por producto</button>
+            <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Calcular costo unitario</button>
           </div>
         </div>
 
         <div class="steps">
-          <div class="step-card"><b><span>1</span>Producto</b><p>Selecciona el postre al que quieres organizarle sus ingredientes.</p></div>
-          <div class="step-card"><b><span>2</span>Compra actual</b><p>Registra ingrediente, cantidad comprada, unidad y precio. Esto lo puedes hacer desde ya.</p></div>
-          <div class="step-card"><b><span>3</span>Medida pendiente</b><p>Si aún no sabes cuánto usa cada producto, déjalo en blanco o en 0.</p></div>
-          <div class="step-card"><b><span>4</span>Costo real</b><p>Cuando tengas las medidas por unidad, el sistema calcula costo unitario, inversión y ganancia.</p></div>
+          <div class="step-card"><b><span>1</span>Ingredientes comprados</b><p>Guarda cada ingrediente, cantidad comprada, unidad y costo. Esto será la inversión total de la tanda.</p></div>
+          <div class="step-card"><b><span>2</span>Cantidad producida</b><p>Escribe cuántos postres pequeños, grandes u otros productos salieron de esa inversión.</p></div>
+          <div class="step-card"><b><span>3</span>Ganancia de tanda</b><p>El sistema suma ventas esperadas y resta la inversión total de ingredientes.</p></div>
+          <div class="step-card"><b><span>4</span>Dosis futura</b><p>Cuando midas cuánto usa cada producto, podrás calcular costo unitario por postre.</p></div>
+        </div>
+
+        <div class="card production-cost-card">
+          <div class="dashboard-card-head">
+            <div>
+              <h3>Costeo rápido de la tanda</h3>
+              <p>Usa el total comprado como inversión para fabricar esta tanda completa.</p>
+            </div>
+            <span class="dashboard-icon">🧾</span>
+          </div>
+
+          <div class="notice">
+            En este momento no necesitas dosis por unidad. El sistema toma el <strong>total de ingredientes comprados</strong>
+            como inversión y lo compara contra las ventas de los postres producidos.
+          </div>
+
+          <div id="productionBatchQuantities" class="production-qty-grid"></div>
+          <div id="productionBatchSummary" class="production-summary-grid"></div>
+
+          <div class="production-actions">
+            <button type="button" onclick="openProductionPurchaseModal()">Agregar o editar ingredientes comprados</button>
+            <button class="secondary" type="button" onclick="saveProductionQuantitiesFromUI()">Guardar cantidades producidas</button>
+          </div>
         </div>
 
         <div class="card filters recipe-control-card">
           <div class="form-grid three">
-            <label>Producto a organizar
+            <label>Producto para dosis futura
               <select id="recipeProductSelect"></select>
             </label>
-            <label>Cantidad a fabricar
+            <label>Cantidad a fabricar para simulador
               <input id="simQty" type="number" min="1" value="20" />
             </label>
-            <label>Ingredientes y medidas
-              <button type="button" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Abrir receta del producto</button>
+            <label>Dosis por producto
+              <button type="button" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Agregar medidas cuando las tenga</button>
             </label>
           </div>
           <div class="notice" style="margin-top:12px">
-            Puedes guardar primero solo los datos de compra: <strong>ingrediente + cantidad comprada + costo</strong>.
-            Cuando tengas la medida usada en cada producto, la agregas y el sistema calcula la inversión.
+            Esta parte queda para después: cuando tengas la dosis de cada ingrediente para elaborar 1 unidad,
+            podrás calcular el costo unitario exacto por producto.
           </div>
         </div>
 
@@ -1708,39 +1813,44 @@
           <div class="card">
             <div class="dashboard-card-head">
               <div>
-                <h3>Ingredientes del producto</h3>
-                <p>Lista de ingredientes comprados y estado de medida para calcular el costo.</p>
+                <h3>Ingredientes comprados</h3>
+                <p>Estos ingredientes se toman como inversión total de la tanda.</p>
               </div>
-              <span class="dashboard-icon">🧁</span>
+              <span class="dashboard-icon">🥣</span>
             </div>
-            <span id="recipeTotal" class="badge-total"></span>
-            <div id="recipeTable"></div>
+            <span id="materialTotal" class="badge-total"></span>
+            <div id="materialTable"></div>
           </div>
 
           <div class="card">
             <div class="dashboard-card-head">
               <div>
-                <h3>Simulador de inversión</h3>
-                <p>Se activa cuando agregas la cantidad usada de cada ingrediente por unidad.</p>
+                <h3>Dosis por producto</h3>
+                <p>Opcional por ahora. Sirve para calcular costo unitario cuando tengas las medidas.</p>
               </div>
               <span class="dashboard-icon">🧮</span>
             </div>
-            <div id="simulatorResults"></div>
+            <span id="recipeTotal" class="badge-total"></span>
+            <div id="recipeTable"></div>
           </div>
         </div>
 
-        <details class="card recipe-advanced-details">
-          <summary>Ver base general de materia prima</summary>
-          <p class="mini" style="margin-top:8px">Aquí queda el historial de ingredientes comprados, cantidades, unidades y costos.</p>
-          <div class="section-title"><h3>Materia prima registrada</h3><span id="materialTotal" class="badge-total"></span></div>
-          <div id="materialTable"></div>
-        </details>
+        <div class="card">
+          <div class="dashboard-card-head">
+            <div>
+              <h3>Simulador por dosis</h3>
+              <p>Se activa cuando todos los ingredientes del producto seleccionado tienen medida por unidad.</p>
+            </div>
+            <span class="dashboard-icon">📐</span>
+          </div>
+          <div id="simulatorResults"></div>
+        </div>
 
         <div class="card formula-box recipe-formula-box">
-          <strong>Cómo se calcula cuando tengas medidas:</strong><br>
-          Costo por ingrediente = precio de compra ÷ cantidad comprada × cantidad usada en 1 producto.<br>
-          Costo unitario del producto = suma de los ingredientes medidos.<br>
-          Inversión para producir = costo unitario × cantidad a fabricar.
+          <strong>Cálculo actual de tanda:</strong><br>
+          Ganancia de tanda = total de ventas esperadas - total de ingredientes comprados.<br><br>
+          <strong>Cálculo futuro con dosis:</strong><br>
+          Costo unitario = suma del costo usado de cada ingrediente para elaborar 1 producto.
         </div>
       </section>
 
@@ -2056,6 +2166,50 @@
   </div>
 
 
+
+  <div class="modal-backdrop" id="productionPurchaseModal" onclick="backdropClose(event)">
+    <div class="modal-card recipe-builder-modal" role="dialog" aria-modal="true" aria-labelledby="productionPurchaseTitle">
+      <div class="modal-header">
+        <div>
+          <h3 id="productionPurchaseTitle">Ingredientes comprados para la tanda</h3>
+          <p>Todo lo que registres aquí se suma como inversión total de la tanda.</p>
+        </div>
+        <button class="modal-close" onclick="closeModals()" type="button">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="card recipe-builder-top">
+          <div class="form-grid two">
+            <label>Nombre de la tanda
+              <input id="productionBatchName" placeholder="Ej: Tanda fin de semana" />
+            </label>
+            <label>Agregar ingrediente
+              <button type="button" onclick="addProductionPurchaseRow()">+ Ingrediente comprado</button>
+            </label>
+          </div>
+          <div class="notice" style="margin-top:12px">
+            Registra el costo total de cada ingrediente comprado. No necesitas saber todavía cuánto se usó en cada producto.
+          </div>
+        </div>
+
+        <div class="recipe-builder-legend production-purchase-legend">
+          <span>Ingrediente</span>
+          <span>Compra</span>
+          <span>Costo</span>
+          <span>Notas</span>
+        </div>
+
+        <div id="productionPurchaseRows" class="recipe-builder-rows"></div>
+        <div id="productionPurchaseTotals" class="recipe-builder-totals"></div>
+
+        <div class="modal-footer">
+          <button type="button" class="secondary" onclick="closeModals()">Cancelar</button>
+          <button type="button" onclick="saveProductionPurchase()">Guardar ingredientes comprados</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="recipeBuilderModal" onclick="backdropClose(event)">
     <div class="modal-card recipe-builder-modal" role="dialog" aria-modal="true" aria-labelledby="recipeBuilderTitle">
       <div class="modal-header">
@@ -2342,6 +2496,7 @@
       const cuchara = uid('mat');
       return {
         activeBatchId: batchId,
+        productionBatch:{name:'Tanda actual', productQuantities:{[prodPersonal]:45, [prodEspecial]:15}},
         products:[
           {id:prodPersonal, name:'Postre personal', price:13000, cost:6000, active:true},
           {id:prodEspecial, name:'Postre especial', price:20000, cost:10000, active:true}
@@ -2412,6 +2567,8 @@
       if(!Array.isArray(data.materials) || !Array.isArray(data.recipeItems)) sampleMaterialsAndRecipes(data);
       data.materials ||= [];
       data.recipeItems ||= [];
+      data.productionBatch ||= {name:'Tanda actual', productQuantities:{}};
+      data.productionBatch.productQuantities ||= {};
       return data;
     }
 
@@ -3103,6 +3260,238 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     }
 
 
+
+    function ensureProductionBatch(){
+      state.productionBatch ||= {name:'Tanda actual', productQuantities:{}};
+      state.productionBatch.productQuantities ||= {};
+      state.products.forEach(p=>{
+        if(state.productionBatch.productQuantities[p.id] === undefined){
+          state.productionBatch.productQuantities[p.id] = defaultProductionQty(p);
+        }
+      });
+      return state.productionBatch;
+    }
+
+    function normalizeTextForMatch(text){
+      return String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function defaultProductionQty(product){
+      const name = normalizeTextForMatch(product?.name);
+      if(name.includes('personal') || name.includes('pequen') || name.includes('pequeñ')) return 45;
+      if(name.includes('especial') || name.includes('grande')) return 15;
+      return 0;
+    }
+
+    function productionMaterials(){
+      return state.materials.filter(m=>num(m.packageCost)>0);
+    }
+
+    function productionIngredientInvestment(){
+      return productionMaterials().reduce((sum,m)=>sum + num(m.packageCost), 0);
+    }
+
+    function productionSalesTotal(){
+      const batch = ensureProductionBatch();
+      return state.products.reduce((sum,p)=>sum + num(batch.productQuantities[p.id]) * num(p.price), 0);
+    }
+
+    function productionUnitsTotal(){
+      const batch = ensureProductionBatch();
+      return state.products.reduce((sum,p)=>sum + num(batch.productQuantities[p.id]), 0);
+    }
+
+    function renderProductionBatchCosting(){
+      const qtyBox = document.getElementById('productionBatchQuantities');
+      const summaryBox = document.getElementById('productionBatchSummary');
+      if(!qtyBox || !summaryBox) return;
+
+      const batch = ensureProductionBatch();
+
+      qtyBox.innerHTML = state.products.length ? state.products.map(p=>{
+        const qty = num(batch.productQuantities[p.id]);
+        return `<div class="production-qty-item">
+          <strong>${escapeHTML(p.name)}</strong>
+          <small>Precio venta: ${money(p.price)} por unidad</small>
+          <input type="number" min="0" step="1" value="${qty}" data-production-product="${p.id}" oninput="updateProductionQty('${p.id}', this.value)" />
+        </div>`;
+      }).join('') : '<div class="empty">Crea productos para calcular ventas por tanda.</div>';
+
+      renderProductionBatchTotals();
+    }
+
+    function renderProductionBatchTotals(){
+      const summaryBox = document.getElementById('productionBatchSummary');
+      if(!summaryBox) return;
+      const batch = ensureProductionBatch();
+      const investment = productionIngredientInvestment();
+      const sales = productionSalesTotal();
+      const units = productionUnitsTotal();
+      const profit = sales - investment;
+      const materialCount = productionMaterials().length;
+
+      summaryBox.innerHTML = [
+        ['Unidades producidas', `${units}`, `${state.products.length} producto${state.products.length===1?'':'s'}`],
+        ['Ventas esperadas', money(sales), 'Cantidad producida × precio venta'],
+        ['Inversión ingredientes', money(investment), `${materialCount} ingrediente${materialCount===1?'':'s'} comprado${materialCount===1?'':'s'}`],
+        ['Ganancia de tanda', money(profit), 'Ventas esperadas - inversión', 'highlight']
+      ].map(x=>`<div class="production-summary-card ${x[3]||''}"><small>${x[0]}</small><strong>${x[1]}</strong><span>${x[2]}</span></div>`).join('');
+    }
+
+    function updateProductionQty(productId, value){
+      const batch = ensureProductionBatch();
+      batch.productQuantities[productId] = Math.max(0, num(value));
+      save();
+      renderProductionBatchTotals();
+    }
+
+    function saveProductionQuantitiesFromUI(){
+      const batch = ensureProductionBatch();
+      document.querySelectorAll('[data-production-product]').forEach(input=>{
+        batch.productQuantities[input.dataset.productionProduct] = Math.max(0, num(input.value));
+      });
+      save();
+      renderProductionBatchTotals();
+      toast('Cantidades producidas guardadas.');
+    }
+
+    function productionPurchaseDefaultRow(){
+      return {id:'', name:'', category:'Ingredientes', packageQty:'', unit:'g', packageCost:'', notes:''};
+    }
+
+    function openProductionPurchaseModal(){
+      ensureProductionBatch();
+      const nameInput = document.getElementById('productionBatchName');
+      if(nameInput) nameInput.value = state.productionBatch.name || 'Tanda actual';
+      const rows = productionMaterials().map(m=>({
+        id:m.id,
+        name:m.name || '',
+        category:m.category || 'Ingredientes',
+        packageQty:m.packageQty || '',
+        unit:m.unit || 'g',
+        packageCost:m.packageCost || '',
+        notes:m.notes || ''
+      }));
+      renderProductionPurchaseRows(rows.length ? rows : [productionPurchaseDefaultRow()]);
+      openModal('productionPurchaseModal');
+    }
+
+    function getProductionPurchaseRowsFromDOM(){
+      return Array.from(document.querySelectorAll('#productionPurchaseRows .production-purchase-row')).map(row=>({
+        id:row.dataset.materialId || '',
+        name:row.querySelector('[data-field="name"]')?.value.trim() || '',
+        category:row.querySelector('[data-field="category"]')?.value || 'Ingredientes',
+        packageQty:num(row.querySelector('[data-field="packageQty"]')?.value),
+        unit:row.querySelector('[data-field="unit"]')?.value || 'g',
+        packageCost:num(row.querySelector('[data-field="packageCost"]')?.value),
+        notes:row.querySelector('[data-field="notes"]')?.value.trim() || ''
+      }));
+    }
+
+    function renderProductionPurchaseRows(rows){
+      const box = document.getElementById('productionPurchaseRows');
+      if(!box) return;
+      box.innerHTML = rows.map((r,i)=>`
+        <div class="recipe-builder-row production-purchase-row" data-index="${i}" data-material-id="${escapeHTML(r.id||'')}">
+          <div class="row-group">
+            <label>Ingrediente comprado
+              <input data-field="name" value="${escapeHTML(r.name||'')}" placeholder="Ej: Crema de leche" />
+            </label>
+            <label>Categoría
+              <select data-field="category">
+                ${['Ingredientes','Empaques','Decoración','Desechables','Otros'].map(c=>`<option ${String(r.category||'Ingredientes')===c?'selected':''}>${c}</option>`).join('')}
+              </select>
+            </label>
+          </div>
+
+          <div class="row-group">
+            <div class="row-inline">
+              <label>Cantidad comprada
+                <input data-field="packageQty" type="number" min="0" step="0.01" value="${r.packageQty ?? ''}" placeholder="1000" />
+              </label>
+              <label>Unidad
+                <select data-field="unit">
+                  ${['g','kg','ml','L','unidad','paquete'].map(u=>`<option value="${u}" ${String(r.unit||'g')===u?'selected':''}>${u}</option>`).join('')}
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="row-group">
+            <label>Costo total comprado
+              <input data-field="packageCost" type="number" min="0" step="1" value="${r.packageCost ?? ''}" placeholder="15000" />
+            </label>
+          </div>
+
+          <div class="row-group">
+            <label>Notas
+              <input data-field="notes" value="${escapeHTML(r.notes||'')}" placeholder="Marca, lugar o detalle" />
+            </label>
+          </div>
+
+          <button type="button" class="danger recipe-builder-remove" onclick="removeProductionPurchaseRow(${i})">×</button>
+        </div>
+      `).join('');
+      recalcProductionPurchase();
+    }
+
+    function addProductionPurchaseRow(){
+      const rows = getProductionPurchaseRowsFromDOM();
+      rows.push(productionPurchaseDefaultRow());
+      renderProductionPurchaseRows(rows);
+    }
+
+    function removeProductionPurchaseRow(index){
+      const rows = getProductionPurchaseRowsFromDOM();
+      rows.splice(index, 1);
+      renderProductionPurchaseRows(rows.length ? rows : [productionPurchaseDefaultRow()]);
+    }
+
+    function recalcProductionPurchase(){
+      const rows = getProductionPurchaseRowsFromDOM().filter(r=>r.name && r.packageCost > 0);
+      const total = rows.reduce((sum,r)=>sum + num(r.packageCost), 0);
+      const qtyTotal = rows.reduce((sum,r)=>sum + num(r.packageQty), 0);
+      const box = document.getElementById('productionPurchaseTotals');
+      if(!box) return;
+      box.innerHTML = [
+        ['Ingredientes', `${rows.length}`],
+        ['Cantidad total registrada', `${Number(qtyTotal.toFixed(2))}`],
+        ['Inversión total', money(total)]
+      ].map(x=>`<div class="recipe-builder-total-card"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join('');
+    }
+
+    function saveProductionPurchase(){
+      ensureProductionBatch();
+      const batchName = document.getElementById('productionBatchName')?.value.trim();
+      if(batchName) state.productionBatch.name = batchName;
+
+      const rows = getProductionPurchaseRowsFromDOM().filter(r=>r.name && r.packageQty > 0 && r.packageCost >= 0);
+      if(!rows.length){
+        toast('Agrega por lo menos un ingrediente comprado con cantidad y costo.');
+        return;
+      }
+
+      const savedMaterials = rows.map(r=>({
+        id:r.id || uid('mat'),
+        name:r.name,
+        category:r.category || 'Ingredientes',
+        packageQty:Math.max(0, r.packageQty),
+        unit:r.unit || 'g',
+        packageCost:Math.max(0, r.packageCost),
+        supplier:'',
+        updatedAt:today(),
+        notes:r.notes || ''
+      }));
+
+      const savedIds = new Set(savedMaterials.map(m=>m.id));
+      state.materials = savedMaterials;
+      state.recipeItems = state.recipeItems.filter(item => savedIds.has(item.materialId));
+
+      closeModals();
+      renderAll();
+      toast('Ingredientes comprados guardados como inversión de la tanda.');
+    }
+
     function recipeMeasureStatus(productId){
       const items = recipeItemsForProduct(productId);
       const measured = items.filter(r=>num(r.qtyPerUnit)>0);
@@ -3119,6 +3508,7 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     }
 
     function renderRecipes(){
+      renderProductionBatchCosting();
       const selectedId = document.getElementById('recipeProductSelect')?.value || state.products[0]?.id || '';
       const product = productById(selectedId);
       const qty = Math.max(1, num(document.getElementById('simQty')?.value || 20));
@@ -3190,8 +3580,8 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
         </div><div style="height:12px"></div><div class="table-wrap"><table><thead><tr><th>Material a comprar / usar</th><th class="number">Cantidad total</th><th class="number">Costo estimado</th></tr></thead><tbody>${measuredShopping.map(x=>`<tr><td>${escapeHTML(x.material?.name || 'Material eliminado')}<br><small>${money(materialUnitCost(x.material))}/${x.material?.unit || ''}</small></td><td class="number">${Number(x.totalQty.toFixed(2))} ${x.material?.unit || ''}</td><td class="number">${money(x.cost)}</td></tr>`).join('')}</tbody></table></div>`;
       }
 
-      document.getElementById('materialTotal').textContent = `${state.materials.length} materiales registrados`;
-      document.getElementById('materialTable').innerHTML = state.materials.length ? `<div class="table-wrap action-table"><table><thead><tr><th>Material</th><th>Categoría</th><th class="number">Compra</th><th class="number">Precio compra</th><th class="number">Costo unitario</th><th>Proveedor</th><th>Actualizado</th><th>Acciones</th></tr></thead><tbody>${state.materials.map(m=>`<tr><td><strong>${escapeHTML(m.name)}</strong><br><small>${escapeHTML(m.notes||'')}</small></td><td>${escapeHTML(m.category||'')}</td><td class="number">${num(m.packageQty)} ${m.unit}</td><td class="number">${money(m.packageCost)}</td><td class="number">${money(materialUnitCost(m))}/${m.unit}</td><td>${escapeHTML(m.supplier||'')}</td><td>${m.updatedAt||''}</td><td><div class="row-actions"><button class="secondary" onclick="editMaterial('${m.id}')">Editar</button><button class="danger" onclick="deleteMaterial('${m.id}')">Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay materiales registrados. Agrega ingredientes desde la receta del producto.</div>';
+      document.getElementById('materialTotal').textContent = `${productionMaterials().length} ingredientes comprados · inversión ${money(productionIngredientInvestment())}`;
+      document.getElementById('materialTable').innerHTML = productionMaterials().length ? `<div class="table-wrap action-table"><table><thead><tr><th>Material</th><th>Categoría</th><th class="number">Compra</th><th class="number">Precio compra</th><th class="number">Costo unitario</th><th>Proveedor</th><th>Actualizado</th><th>Acciones</th></tr></thead><tbody>${productionMaterials().map(m=>`<tr><td><strong>${escapeHTML(m.name)}</strong><br><small>${escapeHTML(m.notes||'')}</small></td><td>${escapeHTML(m.category||'')}</td><td class="number">${num(m.packageQty)} ${m.unit}</td><td class="number">${money(m.packageCost)}</td><td class="number">${money(materialUnitCost(m))}/${m.unit}</td><td>${escapeHTML(m.supplier||'')}</td><td>${m.updatedAt||''}</td><td><div class="row-actions"><button class="secondary" onclick="editMaterial('${m.id}')">Editar</button><button class="danger" onclick="deleteMaterial('${m.id}')">Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay materiales registrados. Agrega ingredientes desde la receta del producto.</div>';
 
       document.getElementById('recipeTotal').textContent = product ? `${items.length} ingredientes · ${status.pending ? status.pending + ' pendientes de medida' : 'receta lista'}` : '';
       document.getElementById('recipeTable').innerHTML = product && items.length ? `<div class="recipe-guide-card">
@@ -3373,6 +3763,12 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       recipeBuilderRowsEl.addEventListener('change', recalcRecipeBuilder);
     }
 
+    const productionPurchaseRowsEl = document.getElementById('productionPurchaseRows');
+    if(productionPurchaseRowsEl){
+      productionPurchaseRowsEl.addEventListener('input', recalcProductionPurchase);
+      productionPurchaseRowsEl.addEventListener('change', recalcProductionPurchase);
+    }
+
     function setActiveBatch(id){ state.activeBatchId=id; renderAll(); showView('dashboard'); toast('Ahora estás trabajando con este lote.'); }
     function changeBatchStatus(id){
       const b=batchById(id); const statuses=['abierto','preparacion','entregado','cerrado'];
@@ -3548,7 +3944,16 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       saveRecipeBuilder,
       recalcRecipeBuilder,
       recipeMeasureStatus,
-      setupRecipeButtons
+      setupRecipeButtons,
+
+      openProductionPurchaseModal,
+      addProductionPurchaseRow,
+      removeProductionPurchaseRow,
+      saveProductionPurchase,
+      recalcProductionPurchase,
+      updateProductionQty,
+      saveProductionQuantitiesFromUI,
+      renderProductionBatchCosting,
     });
 
 
