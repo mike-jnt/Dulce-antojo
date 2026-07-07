@@ -2567,8 +2567,14 @@
       if(!Array.isArray(data.materials) || !Array.isArray(data.recipeItems)) sampleMaterialsAndRecipes(data);
       data.materials ||= [];
       data.recipeItems ||= [];
+      data.productionBatches ||= {};
       data.productionBatch ||= {name:'Tanda actual', productQuantities:{}};
       data.productionBatch.productQuantities ||= {};
+      const legacyBatchId = data.productionBatch.batchId || data.activeBatchId || data.batches?.[0]?.id || 'general';
+      if(data.productionBatch && !data.productionBatches[legacyBatchId]){
+        data.productionBatches[legacyBatchId] = data.productionBatch;
+        data.productionBatches[legacyBatchId].batchId = legacyBatchId;
+      }
       return data;
     }
 
@@ -3073,11 +3079,16 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       const totalPending = Math.max(0,totalSold-totalReceived);
       const productCost = orders.reduce((s,o)=>s+orderCost(o),0);
       const extraExpenses = expenses.reduce((s,e)=>s+num(e.amount),0);
-      const investment = productCost + extraExpenses;
+
+      // Evita duplicar costos: si hay gastos/inversión registrados, esos son la inversión real.
+      // Si aún no hay gastos, usa el costo unitario de productos solo como estimación.
+      const investment = extraExpenses > 0 ? extraExpenses : productCost;
+      const investmentMode = extraExpenses > 0 ? 'gastos' : 'costo_productos';
+
       const estimatedProfit = totalSold - investment;
       const realProfit = totalReceived - investment;
       const units = orders.reduce((s,o)=>s+num(o.quantity),0);
-      return {totalSold,totalReceived,totalPending,productCost,extraExpenses,investment,estimatedProfit,realProfit,units};
+      return {totalSold,totalReceived,totalPending,productCost,extraExpenses,investment,estimatedProfit,realProfit,units,investmentMode};
     }
     function monthFilter(arr, dateKey, month){ return arr.filter(x => String(x[dateKey]||'').slice(0,7) === month); }
 
@@ -3256,20 +3267,38 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       if(filter !== 'all') expenses = expenses.filter(e=>e.batchId===filter);
       document.getElementById('expenseTotal').textContent = `${expenses.length} gastos · ${money(expenses.reduce((s,e)=>s+num(e.amount),0))}`;
       if(!expenses.length){ document.getElementById('expenseTable').innerHTML = '<div class="empty">No hay gastos registrados.</div>'; return; }
-      document.getElementById('expenseTable').innerHTML = `<div class="table-wrap action-table"><table><thead><tr><th>Lote</th><th>Fecha</th><th>Concepto</th><th>Categoría</th><th class="number">Valor</th><th>Acciones</th></tr></thead><tbody>${expenses.map(e=>{const b=batchById(e.batchId); return `<tr><td><strong>${b?b.code:'Sin lote'}</strong></td><td>${e.date}</td><td>${escapeHTML(e.concept)}</td><td>${escapeHTML(e.category||'')}</td><td class="number">${money(e.amount)}</td><td><div class="row-actions"><button class="secondary" onclick="editExpense('${e.id}')">Editar</button><button class="danger" onclick="deleteExpense('${e.id}')">Eliminar</button></div></td></tr>`}).join('')}</tbody></table></div>`;
+      document.getElementById('expenseTable').innerHTML = `<div class="table-wrap action-table"><table><thead><tr><th>Lote</th><th>Fecha</th><th>Concepto</th><th>Categoría</th><th class="number">Valor</th><th>Acciones</th></tr></thead><tbody>${expenses.map(e=>{const b=batchById(e.batchId); return `<tr><td><strong>${b?b.code:'Sin lote'}</strong></td><td>${e.date}</td><td>${escapeHTML(e.concept)}</td><td>${escapeHTML(e.category||'')}</td><td class="number">${money(e.amount)}</td><td><div class="row-actions">${e.source==='productionBatch'?'<button class="secondary" onclick="showView(\'recipes\')">Ver costeo</button><button class="ghost" disabled>Automático</button>':`<button class="secondary" onclick="editExpense('${e.id}')">Editar</button><button class="danger" onclick="deleteExpense('${e.id}')">Eliminar</button>`}</div></td></tr>`}).join('')}</tbody></table></div>`;
     }
 
 
 
     function ensureProductionBatch(){
-      state.productionBatch ||= {name:'Tanda actual', productQuantities:{}};
-      state.productionBatch.productQuantities ||= {};
+      const active = activeBatch();
+      const batchId = active?.id || state.activeBatchId || state.batches?.[0]?.id || 'general';
+      state.productionBatches ||= {};
+      if(!state.productionBatches[batchId]){
+        state.productionBatches[batchId] = {
+          batchId,
+          name: active ? `Tanda ${active.code}` : 'Tanda actual',
+          productQuantities:{},
+          materialIds:[],
+          expenseId:`gasto_tanda_${batchId}`
+        };
+      }
+      const batch = state.productionBatches[batchId];
+      batch.batchId = batchId;
+      batch.productQuantities ||= {};
+      batch.materialIds ||= [];
+      batch.expenseId ||= `gasto_tanda_${batchId}`;
+
       state.products.forEach(p=>{
-        if(state.productionBatch.productQuantities[p.id] === undefined){
-          state.productionBatch.productQuantities[p.id] = defaultProductionQty(p);
+        if(batch.productQuantities[p.id] === undefined){
+          batch.productQuantities[p.id] = defaultProductionQty(p);
         }
       });
-      return state.productionBatch;
+
+      state.productionBatch = batch;
+      return batch;
     }
 
     function normalizeTextForMatch(text){
@@ -3283,8 +3312,27 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       return 0;
     }
 
+    function isSampleMaterial(m){
+      return normalizeTextForMatch(m?.notes).includes('precio de ejemplo');
+    }
+
     function productionMaterials(){
-      return state.materials.filter(m=>num(m.packageCost)>0);
+      const batch = ensureProductionBatch();
+      const batchMaterials = state.materials.filter(m =>
+        num(m.packageCost)>0 &&
+        !isSampleMaterial(m) &&
+        (m.source === 'productionBatch' || m.isProductionPurchase === true) &&
+        m.batchId === batch.batchId
+      );
+
+      if(batchMaterials.length) return batchMaterials;
+
+      return state.materials.filter(m =>
+        num(m.packageCost)>0 &&
+        !isSampleMaterial(m) &&
+        !m.batchId &&
+        !m.source
+      );
     }
 
     function productionIngredientInvestment(){
@@ -3299,6 +3347,38 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     function productionUnitsTotal(){
       const batch = ensureProductionBatch();
       return state.products.reduce((sum,p)=>sum + num(batch.productQuantities[p.id]), 0);
+    }
+
+    function syncProductionInvestmentExpense(){
+      const batch = ensureProductionBatch();
+      const active = activeBatch();
+      if(!active) return;
+
+      const investment = productionIngredientInvestment();
+      const expenseId = batch.expenseId || `gasto_tanda_${active.id}`;
+      batch.expenseId = expenseId;
+
+      const existingIndex = state.expenses.findIndex(e => e.id === expenseId || (e.source === 'productionBatch' && e.batchId === active.id));
+
+      if(investment <= 0){
+        if(existingIndex >= 0) state.expenses.splice(existingIndex, 1);
+        return;
+      }
+
+      const expense = {
+        id: expenseId,
+        batchId: active.id,
+        date: today(),
+        concept: `Inversión ingredientes - ${batch.name || active.code}`,
+        category: 'Ingredientes',
+        amount: investment,
+        source: 'productionBatch',
+        auto: true,
+        notes: 'Generado automáticamente desde Recetas y costeo para evitar duplicar la inversión.'
+      };
+
+      if(existingIndex >= 0) state.expenses[existingIndex] = {...state.expenses[existingIndex], ...expense};
+      else state.expenses.push(expense);
     }
 
     function renderProductionBatchCosting(){
@@ -3329,8 +3409,10 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       const units = productionUnitsTotal();
       const profit = sales - investment;
       const materialCount = productionMaterials().length;
+      const linkedBatch = activeBatch();
 
       summaryBox.innerHTML = [
+        ['Lote conectado', linkedBatch ? linkedBatch.code : 'Sin lote', 'La inversión se conecta al lote activo'],
         ['Unidades producidas', `${units}`, `${state.products.length} producto${state.products.length===1?'':'s'}`],
         ['Ventas esperadas', money(sales), 'Cantidad producida × precio venta'],
         ['Inversión ingredientes', money(investment), `${materialCount} ingrediente${materialCount===1?'':'s'} comprado${materialCount===1?'':'s'}`],
@@ -3360,9 +3442,9 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     }
 
     function openProductionPurchaseModal(){
-      ensureProductionBatch();
+      const batch = ensureProductionBatch();
       const nameInput = document.getElementById('productionBatchName');
-      if(nameInput) nameInput.value = state.productionBatch.name || 'Tanda actual';
+      if(nameInput) nameInput.value = batch.name || 'Tanda actual';
       const rows = productionMaterials().map(m=>({
         id:m.id,
         name:m.name || '',
@@ -3461,9 +3543,9 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     }
 
     function saveProductionPurchase(){
-      ensureProductionBatch();
+      const batch = ensureProductionBatch();
       const batchName = document.getElementById('productionBatchName')?.value.trim();
-      if(batchName) state.productionBatch.name = batchName;
+      if(batchName) batch.name = batchName;
 
       const rows = getProductionPurchaseRowsFromDOM().filter(r=>r.name && r.packageQty > 0 && r.packageCost >= 0);
       if(!rows.length){
@@ -3471,8 +3553,12 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
         return;
       }
 
+      const oldBatchMaterialIds = new Set(productionMaterials().map(m=>m.id));
       const savedMaterials = rows.map(r=>({
         id:r.id || uid('mat'),
+        batchId: batch.batchId,
+        source:'productionBatch',
+        isProductionPurchase:true,
         name:r.name,
         category:r.category || 'Ingredientes',
         packageQty:Math.max(0, r.packageQty),
@@ -3484,12 +3570,20 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       }));
 
       const savedIds = new Set(savedMaterials.map(m=>m.id));
-      state.materials = savedMaterials;
-      state.recipeItems = state.recipeItems.filter(item => savedIds.has(item.materialId));
+      const deletedIds = new Set([...oldBatchMaterialIds].filter(id=>!savedIds.has(id)));
+
+      state.materials = state.materials
+        .filter(m => !(m.source === 'productionBatch' && m.batchId === batch.batchId))
+        .concat(savedMaterials);
+
+      state.recipeItems = state.recipeItems.filter(item => !deletedIds.has(item.materialId));
+      batch.materialIds = [...savedIds];
+
+      syncProductionInvestmentExpense();
 
       closeModals();
       renderAll();
-      toast('Ingredientes comprados guardados como inversión de la tanda.');
+      toast('Ingredientes conectados a Gastos, Panel principal y Contabilidad.');
     }
 
     function recipeMeasureStatus(productId){
@@ -3637,7 +3731,7 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       document.getElementById('reportMetrics').innerHTML = [
         ['Total vendido', money(s.totalSold), `${s.units} unidades vendidas`],
         ['Total recibido', money(s.totalReceived), 'Dinero que ya entró'],
-        ['Total inversión', money(s.investment), `${money(s.productCost)} costo productos + ${money(s.extraExpenses)} gastos`],
+        ['Total inversión', money(s.investment), s.investmentMode==='gastos' ? `Tomado de gastos registrados: ${money(s.extraExpenses)}` : `Estimado con costo unitario: ${money(s.productCost)}`],
         ['Ganancia del reporte', money(s.estimatedProfit), `Ganancia real en caja: ${money(s.realProfit)}`]
       ].map(m=>`<div class="card metric"><small>${m[0]}</small><strong>${m[1]}</strong><span>${m[2]}</span></div>`).join('');
       const products = groupProducts(orders);
@@ -3674,10 +3768,11 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     observadorTablasMoviles.observe(document.body, {childList:true, subtree:true});
 
     function renderAll(){
+      syncProductionInvestmentExpense();
       fillSelects(); renderDashboard(); renderBatches(); renderProducts(); renderRecipes(); renderOrders(); renderExpenses(); renderAccounting(); etiquetarTablasMoviles(); save();
     }
 
-    document.getElementById('activeBatchSelect').addEventListener('change', e=>{state.activeBatchId=e.target.value; renderAll(); toast('Lote activo actualizado.');});
+    document.getElementById('activeBatchSelect').addEventListener('change', e=>{state.activeBatchId=e.target.value; ensureProductionBatch(); renderAll(); toast('Lote activo actualizado.');});
 
     document.getElementById('batchForm').addEventListener('submit', e=>{
       e.preventDefault();
@@ -3769,7 +3864,7 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       productionPurchaseRowsEl.addEventListener('change', recalcProductionPurchase);
     }
 
-    function setActiveBatch(id){ state.activeBatchId=id; renderAll(); showView('dashboard'); toast('Ahora estás trabajando con este lote.'); }
+    function setActiveBatch(id){ state.activeBatchId=id; ensureProductionBatch(); renderAll(); showView('dashboard'); toast('Ahora estás trabajando con este lote.'); }
     function changeBatchStatus(id){
       const b=batchById(id); const statuses=['abierto','preparacion','entregado','cerrado'];
       const next = statuses[(statuses.indexOf(b.status)+1)%statuses.length]; b.status=next; renderAll(); toast('Estado del lote actualizado.');
@@ -3778,7 +3873,7 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       const hasData = state.orders.some(o=>o.batchId===id) || state.expenses.some(e=>e.batchId===id);
       const msg = hasData ? 'Este lote tiene pedidos o gastos. Si lo eliminas, también se eliminarán sus registros. ¿Continuar?' : '¿Eliminar este lote?';
       if(!confirm(msg)) return;
-      state.batches = state.batches.filter(b=>b.id!==id); state.orders = state.orders.filter(o=>o.batchId!==id); state.expenses = state.expenses.filter(e=>e.batchId!==id);
+      state.batches = state.batches.filter(b=>b.id!==id); state.orders = state.orders.filter(o=>o.batchId!==id); state.expenses = state.expenses.filter(e=>e.batchId!==id); state.materials = state.materials.filter(m=>m.batchId!==id); if(state.productionBatches) delete state.productionBatches[id];
       state.activeBatchId = state.batches[0]?.id || '';
       renderAll(); toast('Lote eliminado.');
     }
@@ -3822,13 +3917,15 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
 
     function editExpense(id){
       const e=state.expenses.find(x=>x.id===id); if(!e) return;
+      if(e.source==='productionBatch'){ toast('Este gasto se actualiza desde Recetas y costeo para evitar duplicar datos.'); showView('recipes'); return; }
+      if(e.source==='productionBatch'){ toast('Este gasto se actualiza desde Recetas y costeo para evitar duplicar datos.'); showView('recipes'); return; }
       showView('expenses'); editingExpenseId.value=e.id; expenseBatch.value=e.batchId; expenseConcept.value=e.concept; expenseCategory.value=e.category; expenseAmount.value=e.amount; expenseDate.value=e.date;
       document.getElementById('expenseModalTitle').textContent = 'Editar gasto o inversión';
       openModal('expenseModal');
       setTimeout(()=>expenseConcept.focus(), 80);
     }
     function resetExpenseForm(){ editingExpenseId.value=''; expenseForm.reset(); expenseBatch.value=state.activeBatchId||''; expenseDate.value=today(); document.getElementById('expenseModalTitle').textContent = 'Registrar gasto o inversión'; }
-    function deleteExpense(id){ if(!confirm('¿Eliminar este gasto?')) return; state.expenses=state.expenses.filter(e=>e.id!==id); renderAll(); toast('Gasto eliminado.'); }
+    function deleteExpense(id){ const exp=state.expenses.find(e=>e.id===id); if(exp?.source==='productionBatch'){ toast('Este gasto es automático desde Recetas y costeo. Modifícalo allí.'); showView('recipes'); return; } if(!confirm('¿Eliminar este gasto?')) return; state.expenses=state.expenses.filter(e=>e.id!==id); renderAll(); toast('Gasto eliminado.'); }
 
     function showRecipeFor(id){
       showView('recipes');
