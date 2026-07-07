@@ -1653,8 +1653,8 @@
             <p>Selecciona un producto, registra sus ingredientes con precio de compra y define cuánto usa cada unidad.</p>
           </div>
           <div class="recipe-actions">
-            <button onclick="openRecipeBuilderModal()">Editar receta y costos</button>
-            <button class="secondary" onclick="syncSelectedRecipeCost()">Actualizar costo del producto</button>
+            <button onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Editar receta y costos</button>
+            <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Actualizar costo del producto</button>
           </div>
         </div>
 
@@ -1674,7 +1674,7 @@
               <input id="simQty" type="number" min="1" value="20" />
             </label>
             <label>Receta del producto
-              <button type="button" onclick="openRecipeBuilderModal()">Abrir guía de ingredientes</button>
+              <button type="button" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Abrir guía de ingredientes</button>
             </label>
           </div>
           <div class="notice" style="margin-top:12px">
@@ -2032,6 +2032,55 @@
             <button type="submit">Guardar ingrediente</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-backdrop" id="recipeBuilderModal" onclick="backdropClose(event)">
+    <div class="modal-card recipe-builder-modal" role="dialog" aria-modal="true" aria-labelledby="recipeBuilderTitle">
+      <div class="modal-header">
+        <div>
+          <h3 id="recipeBuilderTitle">Receta y costos del producto</h3>
+          <p>Registra ingredientes, precio de compra y cantidad usada en una sola pantalla.</p>
+        </div>
+        <button class="modal-close" onclick="closeModals()" type="button">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="card recipe-builder-top">
+          <div class="form-grid three">
+            <label>Producto
+              <select id="recipeBuilderProduct"></select>
+            </label>
+            <label>Cantidad para simular
+              <input id="recipeBuilderQty" type="number" min="1" value="20" />
+            </label>
+            <label>Agregar ingrediente
+              <button type="button" onclick="addRecipeBuilderRow()" data-recipe-action="add-row">+ Ingrediente</button>
+            </label>
+          </div>
+          <div class="notice" style="margin-top:12px">
+            Primero escribe el ingrediente y su precio de compra. Después indica cuánto se usa para fabricar
+            <strong>1 unidad</strong> del producto. El sistema calcula el costo unitario automáticamente.
+          </div>
+        </div>
+
+        <div class="recipe-builder-legend">
+          <span>Ingrediente</span>
+          <span>Compra</span>
+          <span>Uso por unidad</span>
+          <span>Costo</span>
+        </div>
+
+        <div id="recipeBuilderRows" class="recipe-builder-rows"></div>
+
+        <div id="recipeBuilderTotals" class="recipe-builder-totals"></div>
+
+        <div class="modal-footer">
+          <button type="button" class="secondary" onclick="closeModals()">Cancelar</button>
+          <button type="button" onclick="saveRecipeBuilder()" data-recipe-action="save-builder">Guardar receta y actualizar costo</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2480,6 +2529,16 @@
     function openRecipeBuilderModal(productId){
       fillSelects();
       const select = document.getElementById('recipeBuilderProduct');
+      const modal = document.getElementById('recipeBuilderModal');
+      if(!modal){
+        alert('No se encontró el modal de receta. Actualiza el archivo del sistema.');
+        return;
+      }
+      if(!state.products.length){
+        toast('Primero crea un producto para poder registrar su receta.');
+        showView('products');
+        return;
+      }
       if(!select) return;
       select.innerHTML = state.products.map(p=>`<option value="${p.id}">${escapeHTML(p.name)}</option>`).join('');
       select.value = productId || document.getElementById('recipeProductSelect')?.value || state.products[0]?.id || '';
@@ -3069,8 +3128,8 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
           </div>`;
         }).join('')}
         <div class="recipe-guide-actions">
-          <button onclick="openRecipeBuilderModal('${product.id}')">Editar receta completa</button>
-          <button class="secondary" onclick="syncSelectedRecipeCost()">Actualizar costo del producto</button>
+          <button onclick="openRecipeBuilderModal('${product.id}')" data-recipe-action="open-builder" data-product-id="${product.id}">Editar receta completa</button>
+          <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Actualizar costo del producto</button>
         </div>
       </div>` : `<div class="empty">Este producto aún no tiene receta. Usa el botón <strong>Abrir guía de ingredientes</strong> para registrar materiales, costos de compra y cantidad usada por unidad.</div>`;
     }
@@ -3383,11 +3442,30 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       addRecipeBuilderRow,
       removeRecipeBuilderRow,
       saveRecipeBuilder,
-      recalcRecipeBuilder
+      recalcRecipeBuilder,
+      setupRecipeButtons
     });
+
+
+    function setupRecipeButtons(){
+      document.addEventListener('click', (event)=>{
+        const target = event.target.closest('[data-recipe-action]');
+        if(!target) return;
+        event.preventDefault();
+
+        const action = target.dataset.recipeAction;
+        const productId = target.dataset.productId || '';
+
+        if(action === 'open-builder') openRecipeBuilderModal(productId);
+        if(action === 'sync-cost') syncSelectedRecipeCost();
+        if(action === 'add-row') addRecipeBuilderRow();
+        if(action === 'save-builder') saveRecipeBuilder();
+      });
+    }
 
     function init(){
       setupNav();
+      setupRecipeButtons();
       batchOpen.value=today(); batchDelivery.value=today(); orderDate.value=today(); expenseDate.value=today(); materialUpdatedAt.value=today(); reportMonth.value=monthNow();
       document.body.dataset.view = 'dashboard'; fillSelects(); resetOrderForm(); resetExpenseForm(); resetMaterialForm(); resetRecipeForm(); renderMobileNavigation(); renderSectionGuide('dashboard'); updateMobileNavigationState('dashboard'); renderAll(); firebaseReady = true; startCloudSync();
     }
