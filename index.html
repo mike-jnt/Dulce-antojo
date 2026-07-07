@@ -1388,6 +1388,72 @@
     }
 
 
+
+    /* ===== Recetas y costeo unificado ===== */
+    .recipe-control-card .notice strong{color:var(--brand-dark)}
+    .recipe-advanced-details{margin-top:16px}
+    .recipe-advanced-details summary{cursor:pointer;color:var(--brand-dark);font-weight:900}
+    .recipe-formula-box{margin-top:16px;line-height:1.5}
+    .recipe-guide-card{display:grid;gap:10px}
+    .recipe-guide-item{
+      border:1px solid #f1d2dc;border-radius:16px;background:#fffafd;padding:12px;display:grid;gap:10px;
+    }
+    .recipe-guide-main{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .recipe-guide-main strong{color:var(--brand-dark);font-size:16px}
+    .recipe-guide-main small{color:var(--muted);display:block;margin-top:4px;line-height:1.3}
+    .recipe-guide-numbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .recipe-guide-numbers div{background:#fff;border:1px solid #f3d5df;border-radius:12px;padding:9px}
+    .recipe-guide-numbers span{
+      display:block;color:var(--muted);font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;
+    }
+    .recipe-guide-numbers b{display:block;color:var(--brand-dark);margin-top:4px;font-size:13px}
+    .recipe-guide-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .recipe-guide-actions button{min-height:36px;padding:8px 10px;font-size:12px;box-shadow:none}
+
+    .recipe-builder-modal{max-width:980px}
+    .recipe-builder-top{margin-bottom:14px}
+    .recipe-builder-legend{
+      display:grid;grid-template-columns:1.5fr 1.4fr 1fr .8fr;gap:10px;color:var(--muted);
+      font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;padding:0 6px 8px;
+    }
+    .recipe-builder-rows{display:grid;gap:12px}
+    .recipe-builder-row{
+      background:#fff;border:1px solid #f0ccd8;border-radius:18px;padding:12px;box-shadow:0 8px 18px rgba(91,48,47,.06);
+      display:grid;grid-template-columns:1.5fr 1.4fr 1fr .8fr auto;gap:10px;align-items:start;
+    }
+    .recipe-builder-row .row-group{display:grid;gap:8px}
+    .recipe-builder-row .row-inline{display:grid;grid-template-columns:1fr 88px;gap:8px}
+    .recipe-builder-row label{text-transform:none;letter-spacing:0;font-size:11px}
+    .recipe-builder-row input,.recipe-builder-row select{padding:10px 11px;border-radius:12px;font-size:13px}
+    .recipe-builder-cost-preview{
+      background:#fff7fb;border:1px solid #f1d2dc;border-radius:14px;padding:10px;min-height:72px;display:grid;align-content:center;gap:4px;
+    }
+    .recipe-builder-cost-preview small{color:var(--muted);font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+    .recipe-builder-cost-preview strong{color:var(--brand-dark);font-size:15px}
+    .recipe-builder-remove{width:38px;min-width:38px;height:38px;padding:0!important;border-radius:12px!important;box-shadow:none!important}
+    .recipe-builder-totals{margin-top:14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .recipe-builder-total-card{background:#fff;border:1px solid #f0ccd8;border-radius:16px;padding:12px}
+    .recipe-builder-total-card small{
+      display:block;color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;
+    }
+    .recipe-builder-total-card strong{display:block;color:var(--brand-dark);font-size:18px;margin-top:6px}
+
+    @media(max-width:760px){
+      .recipe-actions{display:grid;grid-template-columns:1fr;width:100%}
+      .recipe-guide-numbers{grid-template-columns:1fr}
+      .recipe-guide-main{display:grid}
+      .recipe-builder-legend{display:none}
+      .recipe-builder-row{grid-template-columns:1fr;padding:12px}
+      .recipe-builder-row .row-inline{grid-template-columns:1fr 92px}
+      .recipe-builder-remove{width:100%}
+      .recipe-builder-totals{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:390px){
+      .recipe-builder-totals{grid-template-columns:1fr}
+      .recipe-builder-row .row-inline{grid-template-columns:1fr}
+    }
+
+
     @media print{aside,.actions,.row-actions,.mobile-menu,button,.tabs,.filters{display:none!important}main{padding:0}.card{box-shadow:none}.view{display:block}.view:not(.printable){display:none}.table-wrap{overflow:visible}body{background:white}}
   </style>
 </head>
@@ -1583,23 +1649,23 @@
       <section id="recipes" class="view">
         <div class="table-actions-bar">
           <div>
-            <h3>Recetas, materia prima y costeo</h3>
-            <p>Controla lo que se compra, arma la receta por producto y simula cuánto cuesta producir más unidades.</p>
+            <h3>Recetas y costeo por producto</h3>
+            <p>Selecciona un producto, registra sus ingredientes con precio de compra y define cuánto usa cada unidad.</p>
           </div>
           <div class="recipe-actions">
-            <button class="secondary" onclick="openMaterialModal()">+ Material</button>
-            <button onclick="openRecipeModal()">+ Ingrediente a receta</button>
+            <button onclick="openRecipeBuilderModal()">Editar receta y costos</button>
+            <button class="secondary" onclick="syncSelectedRecipeCost()">Actualizar costo del producto</button>
           </div>
         </div>
 
         <div class="steps">
-          <div class="step-card"><b><span>1</span>Registra compras</b><p>Agrega cada insumo con la cantidad comprada y su precio actual. Ejemplo: 1000 g de galleta por $15.000.</p></div>
-          <div class="step-card"><b><span>2</span>Arma la receta</b><p>Indica cuánto usa una unidad de postre. Ejemplo: 35 g de galleta por cada postre personal.</p></div>
-          <div class="step-card"><b><span>3</span>Simula producción</b><p>Escribe cuántos postres quieres fabricar y el sistema calcula materiales, inversión y ganancia.</p></div>
-          <div class="step-card"><b><span>4</span>Actualiza costos</b><p>Cuando cambien los precios de compra, recalcula la receta y actualiza el costo unitario del producto.</p></div>
+          <div class="step-card"><b><span>1</span>Selecciona producto</b><p>Elige el postre que quieres costear. La receta queda asociada solo a ese producto.</p></div>
+          <div class="step-card"><b><span>2</span>Agrega ingredientes</b><p>En un solo formulario escribe el material, cantidad comprada, precio de compra y unidad.</p></div>
+          <div class="step-card"><b><span>3</span>Define uso por unidad</b><p>Indica cuánto de cada ingrediente usa un postre. Con eso se calcula el costo unitario real.</p></div>
+          <div class="step-card"><b><span>4</span>Simula producción</b><p>Escribe cuántos quieres fabricar y verás inversión, venta esperada y ganancia.</p></div>
         </div>
 
-        <div class="card filters">
+        <div class="card filters recipe-control-card">
           <div class="form-grid three">
             <label>Producto a costear
               <select id="recipeProductSelect"></select>
@@ -1607,9 +1673,13 @@
             <label>Cantidad a fabricar
               <input id="simQty" type="number" min="1" value="20" />
             </label>
-            <label>Acción recomendada
-              <button type="button" onclick="syncSelectedRecipeCost()">Actualizar costo del producto</button>
+            <label>Receta del producto
+              <button type="button" onclick="openRecipeBuilderModal()">Abrir guía de ingredientes</button>
             </label>
+          </div>
+          <div class="notice" style="margin-top:12px">
+            La receta se calcula así: <strong>costo del material</strong> = precio de compra ÷ cantidad comprada.
+            Luego: <strong>costo del ingrediente</strong> = costo del material × cantidad usada por unidad.
           </div>
         </div>
 
@@ -1617,25 +1687,42 @@
 
         <div class="grid grid-2">
           <div class="card">
-            <h3 style="margin-top:0;color:var(--brand-dark)">Simulador de producción</h3>
-            <div id="simulatorResults"></div>
-          </div>
-          <div class="card">
-            <h3 style="margin-top:0;color:var(--brand-dark)">Fórmulas de cálculo</h3>
-            <div class="formula-box">
-              <strong>Costo unitario del material:</strong> precio de compra ÷ cantidad comprada.<br>
-              <strong>Costo unitario del producto:</strong> suma del costo de cada ingrediente usado en 1 postre.<br>
-              <strong>Margen de ganancia:</strong> precio de venta - costo unitario.<br>
-              <strong>Margen %:</strong> ganancia ÷ precio de venta × 100.
+            <div class="dashboard-card-head">
+              <div>
+                <h3>Guía de ingredientes y cantidades</h3>
+                <p>Lista clara de lo que lleva el producto seleccionado y cuánto cuesta cada ingrediente.</p>
+              </div>
+              <span class="dashboard-icon">🧁</span>
             </div>
+            <span id="recipeTotal" class="badge-total"></span>
+            <div id="recipeTable"></div>
+          </div>
+
+          <div class="card">
+            <div class="dashboard-card-head">
+              <div>
+                <h3>Simulador de producción</h3>
+                <p>Calcula cuánto debes invertir si vas a fabricar más unidades.</p>
+              </div>
+              <span class="dashboard-icon">🧮</span>
+            </div>
+            <div id="simulatorResults"></div>
           </div>
         </div>
 
-        <div class="section-title"><h3>Materia prima registrada</h3><span id="materialTotal" class="badge-total"></span></div>
-        <div id="materialTable"></div>
+        <details class="card recipe-advanced-details">
+          <summary>Ver base general de materia prima</summary>
+          <p class="mini" style="margin-top:8px">Esta lista se actualiza automáticamente desde las recetas. Sirve como historial de precios de compra.</p>
+          <div class="section-title"><h3>Materia prima registrada</h3><span id="materialTotal" class="badge-total"></span></div>
+          <div id="materialTable"></div>
+        </details>
 
-        <div class="section-title"><h3>Receta del producto seleccionado</h3><span id="recipeTotal" class="badge-total"></span></div>
-        <div id="recipeTable"></div>
+        <div class="card formula-box recipe-formula-box">
+          <strong>Fórmula principal:</strong><br>
+          Costo unitario del producto = suma de cada ingrediente usado en 1 unidad.<br>
+          Inversión para producir = costo unitario × cantidad a fabricar.<br>
+          Ganancia estimada = venta esperada - inversión.
+        </div>
       </section>
 
       <section id="accounting" class="view printable">
@@ -2385,6 +2472,204 @@
       if(event.target.classList.contains('modal-backdrop')) closeModals();
     }
     document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeModals(); });
+
+    function recipeBuilderDefaultRow(){
+      return {materialId:'', recipeId:'', name:'', category:'Ingredientes', packageQty:'', unit:'g', packageCost:'', qtyPerUnit:'', notes:''};
+    }
+
+    function openRecipeBuilderModal(productId){
+      fillSelects();
+      const select = document.getElementById('recipeBuilderProduct');
+      if(!select) return;
+      select.innerHTML = state.products.map(p=>`<option value="${p.id}">${escapeHTML(p.name)}</option>`).join('');
+      select.value = productId || document.getElementById('recipeProductSelect')?.value || state.products[0]?.id || '';
+      document.getElementById('recipeBuilderQty').value = document.getElementById('simQty')?.value || 20;
+      loadRecipeBuilderRows();
+      openModal('recipeBuilderModal');
+    }
+
+    function loadRecipeBuilderRows(){
+      const productId = document.getElementById('recipeBuilderProduct')?.value || '';
+      const rows = recipeItemsForProduct(productId).map(r=>{
+        const m = materialById(r.materialId);
+        return {
+          materialId:r.materialId, recipeId:r.id, name:m?.name || '', category:m?.category || 'Ingredientes',
+          packageQty:m?.packageQty || '', unit:m?.unit || 'g', packageCost:m?.packageCost || '',
+          qtyPerUnit:r.qtyPerUnit || '', notes:r.notes || m?.notes || ''
+        };
+      });
+      renderRecipeBuilderRows(rows.length ? rows : [recipeBuilderDefaultRow()]);
+      recalcRecipeBuilder();
+    }
+
+    function getRecipeBuilderRowsFromDOM(){
+      return Array.from(document.querySelectorAll('#recipeBuilderRows .recipe-builder-row')).map(row=>({
+        materialId:row.dataset.materialId || '',
+        recipeId:row.dataset.recipeId || '',
+        name:row.querySelector('[data-field="name"]')?.value.trim() || '',
+        category:row.querySelector('[data-field="category"]')?.value || 'Ingredientes',
+        packageQty:num(row.querySelector('[data-field="packageQty"]')?.value),
+        unit:row.querySelector('[data-field="unit"]')?.value || 'g',
+        packageCost:num(row.querySelector('[data-field="packageCost"]')?.value),
+        qtyPerUnit:num(row.querySelector('[data-field="qtyPerUnit"]')?.value),
+        notes:row.querySelector('[data-field="notes"]')?.value.trim() || ''
+      }));
+    }
+
+    function renderRecipeBuilderRows(rows){
+      const box = document.getElementById('recipeBuilderRows');
+      if(!box) return;
+      box.innerHTML = rows.map((r,i)=>`
+        <div class="recipe-builder-row" data-index="${i}" data-material-id="${escapeHTML(r.materialId||'')}" data-recipe-id="${escapeHTML(r.recipeId||'')}">
+          <div class="row-group">
+            <label>Ingrediente o material
+              <input data-field="name" value="${escapeHTML(r.name||'')}" placeholder="Ej: Galleta, crema, empaque" />
+            </label>
+            <label>Categoría
+              <select data-field="category">
+                ${['Ingredientes','Empaques','Decoración','Desechables','Otros'].map(c=>`<option ${String(r.category||'Ingredientes')===c?'selected':''}>${c}</option>`).join('')}
+              </select>
+            </label>
+          </div>
+
+          <div class="row-group">
+            <div class="row-inline">
+              <label>Cantidad comprada
+                <input data-field="packageQty" type="number" min="0" step="0.01" value="${r.packageQty ?? ''}" placeholder="1000" />
+              </label>
+              <label>Unidad
+                <select data-field="unit">
+                  ${['g','kg','ml','L','unidad','paquete'].map(u=>`<option value="${u}" ${String(r.unit||'g')===u?'selected':''}>${u}</option>`).join('')}
+                </select>
+              </label>
+            </div>
+            <label>Precio de compra
+              <input data-field="packageCost" type="number" min="0" step="1" value="${r.packageCost ?? ''}" placeholder="15000" />
+            </label>
+          </div>
+
+          <div class="row-group">
+            <label>Cantidad usada en 1 producto
+              <input data-field="qtyPerUnit" type="number" min="0" step="0.01" value="${r.qtyPerUnit ?? ''}" placeholder="35" />
+            </label>
+            <label>Nota
+              <input data-field="notes" value="${escapeHTML(r.notes||'')}" placeholder="Opcional" />
+            </label>
+          </div>
+
+          <div class="recipe-builder-cost-preview" data-cost-preview>
+            <small>Costo en receta</small>
+            <strong>$0</strong>
+            <span class="mini">Completa los datos</span>
+          </div>
+
+          <button type="button" class="danger recipe-builder-remove" onclick="removeRecipeBuilderRow(${i})">×</button>
+        </div>
+      `).join('');
+      recalcRecipeBuilder();
+    }
+
+    function addRecipeBuilderRow(){
+      const rows = getRecipeBuilderRowsFromDOM();
+      rows.push(recipeBuilderDefaultRow());
+      renderRecipeBuilderRows(rows);
+    }
+
+    function removeRecipeBuilderRow(index){
+      const rows = getRecipeBuilderRowsFromDOM();
+      rows.splice(index, 1);
+      renderRecipeBuilderRows(rows.length ? rows : [recipeBuilderDefaultRow()]);
+    }
+
+    function recalcRecipeBuilder(){
+      const rows = getRecipeBuilderRowsFromDOM();
+      const product = productById(document.getElementById('recipeBuilderProduct')?.value);
+      const simQty = Math.max(1, num(document.getElementById('recipeBuilderQty')?.value || 20));
+      let unitCost = 0;
+
+      document.querySelectorAll('#recipeBuilderRows .recipe-builder-row').forEach((row, i)=>{
+        const r = rows[i] || {};
+        const unitMaterialCost = r.packageQty > 0 ? r.packageCost / r.packageQty : 0;
+        const ingredientCost = unitMaterialCost * r.qtyPerUnit;
+        unitCost += ingredientCost;
+        const preview = row.querySelector('[data-cost-preview]');
+        if(preview){
+          preview.innerHTML = `<small>Costo en receta</small><strong>${money(ingredientCost)}</strong><span class="mini">${money(unitMaterialCost)}/${escapeHTML(r.unit || '')}</span>`;
+        }
+      });
+
+      const sales = product ? num(product.price) * simQty : 0;
+      const investment = unitCost * simQty;
+      const profit = sales - investment;
+
+      document.getElementById('recipeBuilderTotals').innerHTML = [
+        ['Costo unitario', money(unitCost)],
+        [`Inversión ${simQty} und.`, money(investment)],
+        ['Venta esperada', money(sales)],
+        ['Ganancia estimada', money(profit)]
+      ].map(x=>`<div class="recipe-builder-total-card"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join('');
+    }
+
+    function saveRecipeBuilder(){
+      const productId = document.getElementById('recipeBuilderProduct')?.value;
+      const product = productById(productId);
+      if(!product){ toast('Selecciona un producto.'); return; }
+
+      const rows = getRecipeBuilderRowsFromDOM().filter(r=>r.name && r.packageQty > 0 && r.packageCost >= 0 && r.qtyPerUnit > 0);
+      if(!rows.length){
+        toast('Agrega por lo menos un ingrediente con compra y cantidad usada.');
+        return;
+      }
+
+      const savedRecipeItems = [];
+
+      rows.forEach(r=>{
+        let material = r.materialId ? materialById(r.materialId) : null;
+        if(!material){
+          material = state.materials.find(m =>
+            String(m.name||'').trim().toLowerCase() === r.name.toLowerCase() &&
+            String(m.unit||'') === String(r.unit||'')
+          );
+        }
+        if(!material){
+          material = {id:uid('mat')};
+          state.materials.push(material);
+        }
+
+        Object.assign(material, {
+          name:r.name,
+          category:r.category || 'Ingredientes',
+          packageQty:Math.max(0, r.packageQty),
+          unit:r.unit || 'g',
+          packageCost:Math.max(0, r.packageCost),
+          supplier:'',
+          updatedAt:today(),
+          notes:r.notes || ''
+        });
+
+        savedRecipeItems.push({
+          id:r.recipeId || uid('rec'),
+          productId,
+          materialId:material.id,
+          qtyPerUnit:Math.max(0, r.qtyPerUnit),
+          notes:r.notes || ''
+        });
+      });
+
+      state.recipeItems = state.recipeItems.filter(item => item.productId !== productId).concat(savedRecipeItems);
+
+      const newCost = recipeCost(productId);
+      product.cost = Math.round(newCost);
+
+      document.getElementById('recipeProductSelect').value = productId;
+      document.getElementById('simQty').value = document.getElementById('recipeBuilderQty').value || 20;
+
+      closeModals();
+      renderAll();
+      toast('Receta guardada y costo unitario actualizado.');
+    }
+
+
     function openBatchModal(){
       batchForm.reset();
       batchOpen.value=today(); batchDelivery.value=today(); batchStatus.value='abierto';
@@ -2724,16 +3009,17 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       const product = productById(selectedId);
       const qty = Math.max(1, num(document.getElementById('simQty')?.value || 20));
       const items = product ? recipeItemsForProduct(product.id) : [];
-      const unitCost = product ? effectiveProductCost(product) : 0;
       const recipeOnlyCost = product ? recipeCost(product.id) : 0;
+      const unitCost = product ? (recipeOnlyCost > 0 ? recipeOnlyCost : effectiveProductCost(product)) : 0;
       const sales = product ? num(product.price) * qty : 0;
       const totalCost = unitCost * qty;
       const profit = sales - totalCost;
+
       document.getElementById('recipeCostMetrics').innerHTML = product ? [
         ['Precio venta', money(product.price), 'Valor cobrado por unidad'],
-        ['Costo unitario', money(unitCost), recipeOnlyCost>0?'Calculado con receta actual':'Tomado del costo manual'],
+        ['Costo unitario receta', money(unitCost), recipeOnlyCost>0?'Calculado por ingredientes':'Sin receta: toma costo manual'],
         ['Ganancia unidad', money(num(product.price)-unitCost), `Margen ${pct(marginPct(product.price,unitCost))}`],
-        [`Costo para ${qty}`, money(totalCost), 'Inversión estimada de producción'],
+        [`Inversión para ${qty}`, money(totalCost), 'Costo estimado de producción'],
         [`Ganancia para ${qty}`, money(profit), `Venta esperada: ${money(sales)}`]
       ].map(m=>`<div class="mini-metric"><small>${m[0]}</small><strong>${m[1]}</strong><span>${m[2]}</span></div>`).join('') : '<div class="empty">Crea un producto para costear recetas.</div>';
 
@@ -2743,19 +3029,50 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
         const cost = totalQty * materialUnitCost(m);
         return {recipe:r, material:m, totalQty, cost};
       });
+
       document.getElementById('simulatorResults').innerHTML = product && shopping.length ? `<div class="summary-list">
         <div class="summary-row"><span>Producto</span><strong>${escapeHTML(product.name)}</strong></div>
         <div class="summary-row"><span>Cantidad a fabricar</span><strong>${qty} unidades</strong></div>
+        <div class="summary-row"><span>Costo unitario</span><strong>${money(unitCost)}</strong></div>
         <div class="summary-row"><span>Inversión estimada</span><strong>${money(totalCost)}</strong></div>
         <div class="summary-row"><span>Venta esperada</span><strong>${money(sales)}</strong></div>
         <div class="summary-row total-line"><span>Ganancia estimada</span><strong>${money(profit)}</strong></div>
-      </div><div style="height:12px"></div><div class="table-wrap"><table><thead><tr><th>Material a comprar / usar</th><th class="number">Cantidad total</th><th class="number">Costo estimado</th></tr></thead><tbody>${shopping.map(x=>`<tr><td>${escapeHTML(x.material?.name || 'Material eliminado')}<br><small>${money(materialUnitCost(x.material))}/${x.material?.unit || ''}</small></td><td class="number">${Number(x.totalQty.toFixed(2))} ${x.material?.unit || ''}</td><td class="number">${money(x.cost)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Selecciona un producto y agrega ingredientes a su receta para simular producción.</div>';
+      </div><div style="height:12px"></div><div class="table-wrap"><table><thead><tr><th>Material a comprar / usar</th><th class="number">Cantidad total</th><th class="number">Costo estimado</th></tr></thead><tbody>${shopping.map(x=>`<tr><td>${escapeHTML(x.material?.name || 'Material eliminado')}<br><small>${money(materialUnitCost(x.material))}/${x.material?.unit || ''}</small></td><td class="number">${Number(x.totalQty.toFixed(2))} ${x.material?.unit || ''}</td><td class="number">${money(x.cost)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Selecciona un producto y abre la guía de ingredientes para agregar la receta completa.</div>';
 
       document.getElementById('materialTotal').textContent = `${state.materials.length} materiales registrados`;
-      document.getElementById('materialTable').innerHTML = state.materials.length ? `<div class="table-wrap action-table"><table><thead><tr><th>Material</th><th>Categoría</th><th class="number">Compra</th><th class="number">Precio compra</th><th class="number">Costo unitario</th><th>Proveedor</th><th>Actualizado</th><th>Acciones</th></tr></thead><tbody>${state.materials.map(m=>`<tr><td><strong>${escapeHTML(m.name)}</strong><br><small>${escapeHTML(m.notes||'')}</small></td><td>${escapeHTML(m.category||'')}</td><td class="number">${num(m.packageQty)} ${m.unit}</td><td class="number">${money(m.packageCost)}</td><td class="number">${money(materialUnitCost(m))}/${m.unit}</td><td>${escapeHTML(m.supplier||'')}</td><td>${m.updatedAt||''}</td><td><div class="row-actions"><button class="secondary" onclick="editMaterial('${m.id}')">Editar</button><button class="danger" onclick="deleteMaterial('${m.id}')">Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay materiales registrados.</div>';
+      document.getElementById('materialTable').innerHTML = state.materials.length ? `<div class="table-wrap action-table"><table><thead><tr><th>Material</th><th>Categoría</th><th class="number">Compra</th><th class="number">Precio compra</th><th class="number">Costo unitario</th><th>Proveedor</th><th>Actualizado</th><th>Acciones</th></tr></thead><tbody>${state.materials.map(m=>`<tr><td><strong>${escapeHTML(m.name)}</strong><br><small>${escapeHTML(m.notes||'')}</small></td><td>${escapeHTML(m.category||'')}</td><td class="number">${num(m.packageQty)} ${m.unit}</td><td class="number">${money(m.packageCost)}</td><td class="number">${money(materialUnitCost(m))}/${m.unit}</td><td>${escapeHTML(m.supplier||'')}</td><td>${m.updatedAt||''}</td><td><div class="row-actions"><button class="secondary" onclick="editMaterial('${m.id}')">Editar</button><button class="danger" onclick="deleteMaterial('${m.id}')">Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay materiales registrados. Agrega ingredientes desde la guía de receta.</div>';
 
-      document.getElementById('recipeTotal').textContent = product ? `${items.length} ingredientes · costo receta ${money(recipeOnlyCost)}` : '';
-      document.getElementById('recipeTable').innerHTML = product && items.length ? `<div class="table-wrap action-table"><table><thead><tr><th>Material</th><th>Uso en 1 unidad</th><th class="number">Costo unitario material</th><th class="number">Costo en receta</th><th>Notas</th><th>Acciones</th></tr></thead><tbody>${items.map(r=>{ const m=materialById(r.materialId); const cost=num(r.qtyPerUnit)*materialUnitCost(m); return `<tr><td><strong>${escapeHTML(m?.name || 'Material eliminado')}</strong></td><td>${num(r.qtyPerUnit)} ${m?.unit || ''}</td><td class="number">${money(materialUnitCost(m))}/${m?.unit || ''}</td><td class="number">${money(cost)}</td><td>${escapeHTML(r.notes||'')}</td><td><div class="row-actions"><button class="secondary" onclick="editRecipeItem('${r.id}')">Editar</button><button class="danger" onclick="deleteRecipeItem('${r.id}')">Eliminar</button></div></td></tr>`; }).join('')}</tbody></table></div>` : '<div class="empty">Este producto aún no tiene receta registrada. Agrega sus ingredientes para calcular el costo unitario.</div>';
+      document.getElementById('recipeTotal').textContent = product ? `${items.length} ingredientes · costo unitario ${money(recipeOnlyCost)}` : '';
+      document.getElementById('recipeTable').innerHTML = product && items.length ? `<div class="recipe-guide-card">
+        <div class="summary-list" style="margin-bottom:10px">
+          <div class="summary-row"><span>Producto</span><strong>${escapeHTML(product.name)}</strong></div>
+          <div class="summary-row"><span>Precio venta</span><strong>${money(product.price)}</strong></div>
+          <div class="summary-row"><span>Costo unitario receta</span><strong>${money(recipeOnlyCost)}</strong></div>
+          <div class="summary-row total-line"><span>Ganancia por unidad</span><strong>${money(num(product.price)-recipeOnlyCost)}</strong></div>
+        </div>
+        ${items.map(r=>{
+          const m=materialById(r.materialId);
+          const unit = m?.unit || '';
+          const materialUnit = materialUnitCost(m);
+          const ingredientCost = num(r.qtyPerUnit)*materialUnit;
+          return `<div class="recipe-guide-item">
+            <div class="recipe-guide-main">
+              <span><strong>${escapeHTML(m?.name || 'Material eliminado')}</strong><small>${escapeHTML(m?.category || 'Ingrediente')} · Compra registrada: ${num(m?.packageQty)} ${unit} por ${money(m?.packageCost || 0)}</small></span>
+              <b>${money(ingredientCost)}</b>
+            </div>
+            <div class="recipe-guide-numbers">
+              <div><span>Costo material</span><b>${money(materialUnit)}/${unit}</b></div>
+              <div><span>Uso en 1 unidad</span><b>${num(r.qtyPerUnit)} ${unit}</b></div>
+              <div><span>Costo en receta</span><b>${money(ingredientCost)}</b></div>
+            </div>
+            ${r.notes ? `<small>${escapeHTML(r.notes)}</small>` : ''}
+          </div>`;
+        }).join('')}
+        <div class="recipe-guide-actions">
+          <button onclick="openRecipeBuilderModal('${product.id}')">Editar receta completa</button>
+          <button class="secondary" onclick="syncSelectedRecipeCost()">Actualizar costo del producto</button>
+        </div>
+      </div>` : `<div class="empty">Este producto aún no tiene receta. Usa el botón <strong>Abrir guía de ingredientes</strong> para registrar materiales, costos de compra y cantidad usada por unidad.</div>`;
     }
 
     function renderAccounting(){
@@ -2891,6 +3208,18 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       document.getElementById(id).addEventListener('input', renderAll);
       document.getElementById(id).addEventListener('change', renderAll);
     });
+
+    ['recipeBuilderProduct','recipeBuilderQty'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.addEventListener('input', id==='recipeBuilderProduct' ? loadRecipeBuilderRows : recalcRecipeBuilder);
+      el.addEventListener('change', id==='recipeBuilderProduct' ? loadRecipeBuilderRows : recalcRecipeBuilder);
+    });
+    const recipeBuilderRowsEl = document.getElementById('recipeBuilderRows');
+    if(recipeBuilderRowsEl){
+      recipeBuilderRowsEl.addEventListener('input', recalcRecipeBuilder);
+      recipeBuilderRowsEl.addEventListener('change', recalcRecipeBuilder);
+    }
 
     function setActiveBatch(id){ state.activeBatchId=id; renderAll(); showView('dashboard'); toast('Ahora estás trabajando con este lote.'); }
     function changeBatchStatus(id){
@@ -3049,7 +3378,12 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       deleteMaterial,
       editRecipeItem,
       deleteRecipeItem,
-      syncSelectedRecipeCost
+      syncSelectedRecipeCost,
+      openRecipeBuilderModal,
+      addRecipeBuilderRow,
+      removeRecipeBuilderRow,
+      saveRecipeBuilder,
+      recalcRecipeBuilder
     });
 
     function init(){
