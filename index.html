@@ -1454,6 +1454,23 @@
     }
 
 
+
+    /* ===== Recetas modo compras primero ===== */
+    .recipe-status-panel{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin:12px 0 14px}
+    .recipe-status-card{background:#fff;border:1px solid #f0ccd8;border-radius:18px;padding:14px;box-shadow:0 10px 24px rgba(91,48,47,.07)}
+    .recipe-status-card.warning{background:linear-gradient(135deg,#fff,#fff7e8);border-color:#ead492}
+    .recipe-status-card.ok{background:linear-gradient(135deg,#fff,#f3fff7);border-color:#bde4cc}
+    .recipe-status-card strong{color:var(--brand-dark);display:block;font-size:16px;margin-bottom:5px}
+    .recipe-status-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+    .recipe-status-card button{margin-top:10px;min-height:38px;padding:8px 11px;font-size:12px;box-shadow:none}
+    .measure-pending,.measure-ready{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900}
+    .measure-pending{background:#fff5df;color:#94620f;border:1px solid #efd99d}
+    .measure-ready{background:#f4fff8;color:#2e7d54;border:1px solid #bde4cc}
+    .recipe-builder-row.pending-measure{border-color:#efd99d!important;background:linear-gradient(135deg,#fff,#fffaf0)!important}
+    .recipe-builder-row.ready-measure{border-color:#bde4cc!important}
+    .measurement-helper{color:var(--muted);font-size:11px;line-height:1.3;margin-top:2px}
+    @media(max-width:760px){.recipe-status-panel{grid-template-columns:1fr}}
+
     @media print{aside,.actions,.row-actions,.mobile-menu,button,.tabs,.filters{display:none!important}main{padding:0}.card{box-shadow:none}.view{display:block}.view:not(.printable){display:none}.table-wrap{overflow:visible}body{background:white}}
   </style>
 </head>
@@ -1650,47 +1667,49 @@
         <div class="table-actions-bar">
           <div>
             <h3>Recetas y costeo por producto</h3>
-            <p>Selecciona un producto, registra sus ingredientes con precio de compra y define cuánto usa cada unidad.</p>
+            <p>Primero registra los ingredientes que compras con cantidad y costo. Cuando tengas las medidas, agrega cuánto usa cada producto para calcular inversión.</p>
           </div>
           <div class="recipe-actions">
-            <button onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Editar receta y costos</button>
-            <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Actualizar costo del producto</button>
+            <button onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Registrar ingredientes</button>
+            <button class="secondary" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Agregar medidas</button>
+            <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Calcular costo final</button>
           </div>
         </div>
 
         <div class="steps">
-          <div class="step-card"><b><span>1</span>Selecciona producto</b><p>Elige el postre que quieres costear. La receta queda asociada solo a ese producto.</p></div>
-          <div class="step-card"><b><span>2</span>Agrega ingredientes</b><p>En un solo formulario escribe el material, cantidad comprada, precio de compra y unidad.</p></div>
-          <div class="step-card"><b><span>3</span>Define uso por unidad</b><p>Indica cuánto de cada ingrediente usa un postre. Con eso se calcula el costo unitario real.</p></div>
-          <div class="step-card"><b><span>4</span>Simula producción</b><p>Escribe cuántos quieres fabricar y verás inversión, venta esperada y ganancia.</p></div>
+          <div class="step-card"><b><span>1</span>Producto</b><p>Selecciona el postre al que quieres organizarle sus ingredientes.</p></div>
+          <div class="step-card"><b><span>2</span>Compra actual</b><p>Registra ingrediente, cantidad comprada, unidad y precio. Esto lo puedes hacer desde ya.</p></div>
+          <div class="step-card"><b><span>3</span>Medida pendiente</b><p>Si aún no sabes cuánto usa cada producto, déjalo en blanco o en 0.</p></div>
+          <div class="step-card"><b><span>4</span>Costo real</b><p>Cuando tengas las medidas por unidad, el sistema calcula costo unitario, inversión y ganancia.</p></div>
         </div>
 
         <div class="card filters recipe-control-card">
           <div class="form-grid three">
-            <label>Producto a costear
+            <label>Producto a organizar
               <select id="recipeProductSelect"></select>
             </label>
             <label>Cantidad a fabricar
               <input id="simQty" type="number" min="1" value="20" />
             </label>
-            <label>Receta del producto
-              <button type="button" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Abrir guía de ingredientes</button>
+            <label>Ingredientes y medidas
+              <button type="button" onclick="openRecipeBuilderModal()" data-recipe-action="open-builder">Abrir receta del producto</button>
             </label>
           </div>
           <div class="notice" style="margin-top:12px">
-            La receta se calcula así: <strong>costo del material</strong> = precio de compra ÷ cantidad comprada.
-            Luego: <strong>costo del ingrediente</strong> = costo del material × cantidad usada por unidad.
+            Puedes guardar primero solo los datos de compra: <strong>ingrediente + cantidad comprada + costo</strong>.
+            Cuando tengas la medida usada en cada producto, la agregas y el sistema calcula la inversión.
           </div>
         </div>
 
+        <div id="recipeStatusPanel"></div>
         <div id="recipeCostMetrics" class="cost-grid"></div>
 
         <div class="grid grid-2">
           <div class="card">
             <div class="dashboard-card-head">
               <div>
-                <h3>Guía de ingredientes y cantidades</h3>
-                <p>Lista clara de lo que lleva el producto seleccionado y cuánto cuesta cada ingrediente.</p>
+                <h3>Ingredientes del producto</h3>
+                <p>Lista de ingredientes comprados y estado de medida para calcular el costo.</p>
               </div>
               <span class="dashboard-icon">🧁</span>
             </div>
@@ -1701,8 +1720,8 @@
           <div class="card">
             <div class="dashboard-card-head">
               <div>
-                <h3>Simulador de producción</h3>
-                <p>Calcula cuánto debes invertir si vas a fabricar más unidades.</p>
+                <h3>Simulador de inversión</h3>
+                <p>Se activa cuando agregas la cantidad usada de cada ingrediente por unidad.</p>
               </div>
               <span class="dashboard-icon">🧮</span>
             </div>
@@ -1712,16 +1731,16 @@
 
         <details class="card recipe-advanced-details">
           <summary>Ver base general de materia prima</summary>
-          <p class="mini" style="margin-top:8px">Esta lista se actualiza automáticamente desde las recetas. Sirve como historial de precios de compra.</p>
+          <p class="mini" style="margin-top:8px">Aquí queda el historial de ingredientes comprados, cantidades, unidades y costos.</p>
           <div class="section-title"><h3>Materia prima registrada</h3><span id="materialTotal" class="badge-total"></span></div>
           <div id="materialTable"></div>
         </details>
 
         <div class="card formula-box recipe-formula-box">
-          <strong>Fórmula principal:</strong><br>
-          Costo unitario del producto = suma de cada ingrediente usado en 1 unidad.<br>
-          Inversión para producir = costo unitario × cantidad a fabricar.<br>
-          Ganancia estimada = venta esperada - inversión.
+          <strong>Cómo se calcula cuando tengas medidas:</strong><br>
+          Costo por ingrediente = precio de compra ÷ cantidad comprada × cantidad usada en 1 producto.<br>
+          Costo unitario del producto = suma de los ingredientes medidos.<br>
+          Inversión para producir = costo unitario × cantidad a fabricar.
         </div>
       </section>
 
@@ -2041,8 +2060,8 @@
     <div class="modal-card recipe-builder-modal" role="dialog" aria-modal="true" aria-labelledby="recipeBuilderTitle">
       <div class="modal-header">
         <div>
-          <h3 id="recipeBuilderTitle">Receta y costos del producto</h3>
-          <p>Registra ingredientes, precio de compra y cantidad usada en una sola pantalla.</p>
+          <h3 id="recipeBuilderTitle">Ingredientes, compras y medidas</h3>
+          <p>Guarda primero las compras y, cuando tengas las medidas, completa el uso por unidad.</p>
         </div>
         <button class="modal-close" onclick="closeModals()" type="button">×</button>
       </div>
@@ -2061,15 +2080,14 @@
             </label>
           </div>
           <div class="notice" style="margin-top:12px">
-            Primero escribe el ingrediente y su precio de compra. Después indica cuánto se usa para fabricar
-            <strong>1 unidad</strong> del producto. El sistema calcula el costo unitario automáticamente.
+            Primero registra lo que compraste: ingrediente, cantidad, unidad y precio. Si aún no sabes la medida usada para <strong>1 unidad</strong>, déjala en blanco o en 0. Después podrás volver y completarla.
           </div>
         </div>
 
         <div class="recipe-builder-legend">
           <span>Ingrediente</span>
           <span>Compra</span>
-          <span>Uso por unidad</span>
+          <span>Medida por unidad</span>
           <span>Costo</span>
         </div>
 
@@ -2079,7 +2097,7 @@
 
         <div class="modal-footer">
           <button type="button" class="secondary" onclick="closeModals()">Cancelar</button>
-          <button type="button" onclick="saveRecipeBuilder()" data-recipe-action="save-builder">Guardar receta y actualizar costo</button>
+          <button type="button" onclick="saveRecipeBuilder()" data-recipe-action="save-builder">Guardar ingredientes y medidas</button>
         </div>
       </div>
     </div>
@@ -2578,10 +2596,12 @@
     function renderRecipeBuilderRows(rows){
       const box = document.getElementById('recipeBuilderRows');
       if(!box) return;
-      box.innerHTML = rows.map((r,i)=>`
-        <div class="recipe-builder-row" data-index="${i}" data-material-id="${escapeHTML(r.materialId||'')}" data-recipe-id="${escapeHTML(r.recipeId||'')}">
+      box.innerHTML = rows.map((r,i)=>{
+        const hasMeasure = num(r.qtyPerUnit)>0;
+        return `
+        <div class="recipe-builder-row ${hasMeasure ? 'ready-measure' : 'pending-measure'}" data-index="${i}" data-material-id="${escapeHTML(r.materialId||'')}" data-recipe-id="${escapeHTML(r.recipeId||'')}">
           <div class="row-group">
-            <label>Ingrediente o material
+            <label>Ingrediente comprado
               <input data-field="name" value="${escapeHTML(r.name||'')}" placeholder="Ej: Galleta, crema, empaque" />
             </label>
             <label>Categoría
@@ -2608,23 +2628,24 @@
           </div>
 
           <div class="row-group">
-            <label>Cantidad usada en 1 producto
-              <input data-field="qtyPerUnit" type="number" min="0" step="0.01" value="${r.qtyPerUnit ?? ''}" placeholder="35" />
+            <label>Medida usada en 1 producto <span class="measure-pending">Opcional ahora</span>
+              <input data-field="qtyPerUnit" type="number" min="0" step="0.01" value="${r.qtyPerUnit ?? ''}" placeholder="Déjalo en 0 si no sabes" />
             </label>
+            <div class="measurement-helper">Cuando tengas esta medida, el sistema calculará el costo real por unidad.</div>
             <label>Nota
               <input data-field="notes" value="${escapeHTML(r.notes||'')}" placeholder="Opcional" />
             </label>
           </div>
 
           <div class="recipe-builder-cost-preview" data-cost-preview>
-            <small>Costo en receta</small>
-            <strong>$0</strong>
-            <span class="mini">Completa los datos</span>
+            <small>Estado</small>
+            <strong>${hasMeasure ? 'Con medida' : 'Pendiente'}</strong>
+            <span class="mini">Completa cuando tengas datos</span>
           </div>
 
           <button type="button" class="danger recipe-builder-remove" onclick="removeRecipeBuilderRow(${i})">×</button>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
       recalcRecipeBuilder();
     }
 
@@ -2645,28 +2666,42 @@
       const product = productById(document.getElementById('recipeBuilderProduct')?.value);
       const simQty = Math.max(1, num(document.getElementById('recipeBuilderQty')?.value || 20));
       let unitCost = 0;
+      let pending = 0;
+      let measured = 0;
 
       document.querySelectorAll('#recipeBuilderRows .recipe-builder-row').forEach((row, i)=>{
         const r = rows[i] || {};
         const unitMaterialCost = r.packageQty > 0 ? r.packageCost / r.packageQty : 0;
-        const ingredientCost = unitMaterialCost * r.qtyPerUnit;
-        unitCost += ingredientCost;
+        const hasMeasure = r.qtyPerUnit > 0;
+        const ingredientCost = hasMeasure ? unitMaterialCost * r.qtyPerUnit : 0;
+        if(hasMeasure){
+          unitCost += ingredientCost;
+          measured++;
+        }else if(r.name || r.packageQty || r.packageCost){
+          pending++;
+        }
+        row.classList.toggle('ready-measure', hasMeasure);
+        row.classList.toggle('pending-measure', !hasMeasure);
         const preview = row.querySelector('[data-cost-preview]');
         if(preview){
-          preview.innerHTML = `<small>Costo en receta</small><strong>${money(ingredientCost)}</strong><span class="mini">${money(unitMaterialCost)}/${escapeHTML(r.unit || '')}</span>`;
+          preview.innerHTML = hasMeasure
+            ? `<small>Costo en receta</small><strong>${money(ingredientCost)}</strong><span class="mini">${money(unitMaterialCost)}/${escapeHTML(r.unit || '')}</span>`
+            : `<small>Medida pendiente</small><strong>No calcula aún</strong><span class="mini">${r.packageQty > 0 ? money(unitMaterialCost)+'/'+escapeHTML(r.unit || '') : 'Completa compra'}</span>`;
         }
       });
 
       const sales = product ? num(product.price) * simQty : 0;
       const investment = unitCost * simQty;
       const profit = sales - investment;
+      const complete = pending === 0 && rows.some(r=>r.name);
 
       document.getElementById('recipeBuilderTotals').innerHTML = [
-        ['Costo unitario', money(unitCost)],
-        [`Inversión ${simQty} und.`, money(investment)],
-        ['Venta esperada', money(sales)],
-        ['Ganancia estimada', money(profit)]
-      ].map(x=>`<div class="recipe-builder-total-card"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join('');
+        ['Ingredientes con medida', String(measured)],
+        ['Pendientes', String(pending)],
+        ['Costo unitario parcial', money(unitCost)],
+        [complete ? `Inversión ${simQty} und.` : 'Inversión final', complete ? money(investment) : 'Pendiente']
+      ].map(x=>`<div class="recipe-builder-total-card"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join('') +
+      (complete ? `<div class="recipe-builder-total-card"><small>Ganancia estimada</small><strong>${money(profit)}</strong></div>` : '');
     }
 
     function saveRecipeBuilder(){
@@ -2674,9 +2709,9 @@
       const product = productById(productId);
       if(!product){ toast('Selecciona un producto.'); return; }
 
-      const rows = getRecipeBuilderRowsFromDOM().filter(r=>r.name && r.packageQty > 0 && r.packageCost >= 0 && r.qtyPerUnit > 0);
+      const rows = getRecipeBuilderRowsFromDOM().filter(r=>r.name && r.packageQty > 0 && r.packageCost >= 0);
       if(!rows.length){
-        toast('Agrega por lo menos un ingrediente con compra y cantidad usada.');
+        toast('Agrega por lo menos un ingrediente con cantidad comprada y costo.');
         return;
       }
 
@@ -2710,24 +2745,28 @@
           id:r.recipeId || uid('rec'),
           productId,
           materialId:material.id,
-          qtyPerUnit:Math.max(0, r.qtyPerUnit),
+          qtyPerUnit:Math.max(0, r.qtyPerUnit || 0),
           notes:r.notes || ''
         });
       });
 
       state.recipeItems = state.recipeItems.filter(item => item.productId !== productId).concat(savedRecipeItems);
 
-      const newCost = recipeCost(productId);
-      product.cost = Math.round(newCost);
+      const pendingMeasures = savedRecipeItems.filter(r=>num(r.qtyPerUnit)<=0).length;
+      if(pendingMeasures === 0){
+        const newCost = recipeCost(productId);
+        product.cost = Math.round(newCost);
+        toast('Receta completa guardada y costo unitario actualizado.');
+      }else{
+        toast('Ingredientes guardados. Cuando tengas las medidas, podrás calcular la inversión.');
+      }
 
       document.getElementById('recipeProductSelect').value = productId;
       document.getElementById('simQty').value = document.getElementById('recipeBuilderQty').value || 20;
 
       closeModals();
       renderAll();
-      toast('Receta guardada y costo unitario actualizado.');
     }
-
 
     function openBatchModal(){
       batchForm.reset();
@@ -3063,75 +3102,129 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       document.getElementById('expenseTable').innerHTML = `<div class="table-wrap action-table"><table><thead><tr><th>Lote</th><th>Fecha</th><th>Concepto</th><th>Categoría</th><th class="number">Valor</th><th>Acciones</th></tr></thead><tbody>${expenses.map(e=>{const b=batchById(e.batchId); return `<tr><td><strong>${b?b.code:'Sin lote'}</strong></td><td>${e.date}</td><td>${escapeHTML(e.concept)}</td><td>${escapeHTML(e.category||'')}</td><td class="number">${money(e.amount)}</td><td><div class="row-actions"><button class="secondary" onclick="editExpense('${e.id}')">Editar</button><button class="danger" onclick="deleteExpense('${e.id}')">Eliminar</button></div></td></tr>`}).join('')}</tbody></table></div>`;
     }
 
+
+    function recipeMeasureStatus(productId){
+      const items = recipeItemsForProduct(productId);
+      const measured = items.filter(r=>num(r.qtyPerUnit)>0);
+      const pending = items.filter(r=>num(r.qtyPerUnit)<=0);
+      const measuredCost = measured.reduce((sum,r)=>sum + num(r.qtyPerUnit) * materialUnitCost(materialById(r.materialId)), 0);
+      return {
+        total: items.length,
+        measured: measured.length,
+        pending: pending.length,
+        complete: items.length > 0 && pending.length === 0,
+        hasAnyMeasure: measured.length > 0,
+        measuredCost
+      };
+    }
+
     function renderRecipes(){
       const selectedId = document.getElementById('recipeProductSelect')?.value || state.products[0]?.id || '';
       const product = productById(selectedId);
       const qty = Math.max(1, num(document.getElementById('simQty')?.value || 20));
       const items = product ? recipeItemsForProduct(product.id) : [];
+      const status = product ? recipeMeasureStatus(product.id) : {total:0, measured:0, pending:0, complete:false, hasAnyMeasure:false, measuredCost:0};
       const recipeOnlyCost = product ? recipeCost(product.id) : 0;
-      const unitCost = product ? (recipeOnlyCost > 0 ? recipeOnlyCost : effectiveProductCost(product)) : 0;
+      const finalUnitCost = status.complete ? recipeOnlyCost : 0;
+      const partialUnitCost = status.measuredCost || 0;
       const sales = product ? num(product.price) * qty : 0;
-      const totalCost = unitCost * qty;
-      const profit = sales - totalCost;
+      const totalCost = status.complete ? finalUnitCost * qty : 0;
+      const partialCost = status.hasAnyMeasure ? partialUnitCost * qty : 0;
+      const profit = status.complete ? sales - totalCost : 0;
+
+      const statusPanel = document.getElementById('recipeStatusPanel');
+      if(statusPanel){
+        if(!product){
+          statusPanel.innerHTML = '<div class="empty">Crea un producto para organizar sus ingredientes.</div>';
+        }else if(!status.total){
+          statusPanel.innerHTML = `<div class="recipe-status-panel">
+            <div class="recipe-status-card warning"><strong>Sin ingredientes registrados</strong><p>Ya puedes guardar los ingredientes que compras, aunque todavía no tengas la medida usada por producto.</p><button onclick="openRecipeBuilderModal('${product.id}')">Registrar ingredientes</button></div>
+            <div class="recipe-status-card"><strong>Producto seleccionado</strong><p>${escapeHTML(product.name)} · Precio de venta ${money(product.price)}</p></div>
+          </div>`;
+        }else if(status.complete){
+          statusPanel.innerHTML = `<div class="recipe-status-panel">
+            <div class="recipe-status-card ok"><strong>Receta lista para calcular inversión</strong><p>Todos los ingredientes tienen medida por unidad. Ya puedes calcular costo unitario, inversión y ganancia.</p><button onclick="openRecipeBuilderModal('${product.id}')">Editar ingredientes</button></div>
+            <div class="recipe-status-card"><strong>${status.total} ingredientes medidos</strong><p>Costo unitario calculado: ${money(recipeOnlyCost)}</p></div>
+          </div>`;
+        }else{
+          statusPanel.innerHTML = `<div class="recipe-status-panel">
+            <div class="recipe-status-card warning"><strong>Ingredientes guardados, medidas pendientes</strong><p>Tienes ${status.total} ingredientes registrados. Faltan medidas en ${status.pending}. Puedes completar la cantidad usada por unidad cuando la tengas.</p><button onclick="openRecipeBuilderModal('${product.id}')">Agregar medidas</button></div>
+            <div class="recipe-status-card"><strong>Cálculo parcial</strong><p>${status.measured} ingrediente${status.measured===1?'':'s'} con medida. Costo parcial: ${money(partialUnitCost)} por unidad.</p></div>
+          </div>`;
+        }
+      }
 
       document.getElementById('recipeCostMetrics').innerHTML = product ? [
         ['Precio venta', money(product.price), 'Valor cobrado por unidad'],
-        ['Costo unitario receta', money(unitCost), recipeOnlyCost>0?'Calculado por ingredientes':'Sin receta: toma costo manual'],
-        ['Ganancia unidad', money(num(product.price)-unitCost), `Margen ${pct(marginPct(product.price,unitCost))}`],
-        [`Inversión para ${qty}`, money(totalCost), 'Costo estimado de producción'],
-        [`Ganancia para ${qty}`, money(profit), `Venta esperada: ${money(sales)}`]
+        ['Ingredientes', String(status.total), status.pending ? `${status.pending} pendientes de medida` : 'Todos con medida'],
+        ['Costo unitario', status.complete ? money(recipeOnlyCost) : (status.hasAnyMeasure ? `Parcial ${money(partialUnitCost)}` : 'Pendiente'), status.complete ? 'Calculado con todas las medidas' : 'Agrega medidas para calcular final'],
+        [`Inversión ${qty} und.`, status.complete ? money(totalCost) : (status.hasAnyMeasure ? `Parcial ${money(partialCost)}` : 'Pendiente'), status.complete ? 'Costo total de producción' : 'No es final hasta completar medidas'],
+        ['Ganancia estimada', status.complete ? money(profit) : 'Pendiente', status.complete ? `Venta esperada: ${money(sales)}` : 'Disponible al completar medidas']
       ].map(m=>`<div class="mini-metric"><small>${m[0]}</small><strong>${m[1]}</strong><span>${m[2]}</span></div>`).join('') : '<div class="empty">Crea un producto para costear recetas.</div>';
 
-      const shopping = items.map(r=>{
+      const measuredShopping = items.filter(r=>num(r.qtyPerUnit)>0).map(r=>{
         const m = materialById(r.materialId);
         const totalQty = num(r.qtyPerUnit) * qty;
         const cost = totalQty * materialUnitCost(m);
         return {recipe:r, material:m, totalQty, cost};
       });
 
-      document.getElementById('simulatorResults').innerHTML = product && shopping.length ? `<div class="summary-list">
-        <div class="summary-row"><span>Producto</span><strong>${escapeHTML(product.name)}</strong></div>
-        <div class="summary-row"><span>Cantidad a fabricar</span><strong>${qty} unidades</strong></div>
-        <div class="summary-row"><span>Costo unitario</span><strong>${money(unitCost)}</strong></div>
-        <div class="summary-row"><span>Inversión estimada</span><strong>${money(totalCost)}</strong></div>
-        <div class="summary-row"><span>Venta esperada</span><strong>${money(sales)}</strong></div>
-        <div class="summary-row total-line"><span>Ganancia estimada</span><strong>${money(profit)}</strong></div>
-      </div><div style="height:12px"></div><div class="table-wrap"><table><thead><tr><th>Material a comprar / usar</th><th class="number">Cantidad total</th><th class="number">Costo estimado</th></tr></thead><tbody>${shopping.map(x=>`<tr><td>${escapeHTML(x.material?.name || 'Material eliminado')}<br><small>${money(materialUnitCost(x.material))}/${x.material?.unit || ''}</small></td><td class="number">${Number(x.totalQty.toFixed(2))} ${x.material?.unit || ''}</td><td class="number">${money(x.cost)}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Selecciona un producto y abre la guía de ingredientes para agregar la receta completa.</div>';
+      if(!product || !items.length){
+        document.getElementById('simulatorResults').innerHTML = '<div class="empty">Registra primero los ingredientes que compras para este producto.</div>';
+      }else if(!status.complete){
+        document.getElementById('simulatorResults').innerHTML = `<div class="notice">
+          <strong>Inversión pendiente de medidas.</strong><br>
+          Ya tienes los ingredientes comprados, pero falta definir cuánto usa 1 unidad del producto.
+          ${status.hasAnyMeasure ? `<br><br>Costo parcial con medidas actuales: <strong>${money(partialCost)}</strong> para ${qty} unidades.` : ''}
+        </div>
+        <div style="height:12px"></div>
+        <button onclick="openRecipeBuilderModal('${product.id}')">Completar medidas</button>`;
+      }else{
+        document.getElementById('simulatorResults').innerHTML = `<div class="summary-list">
+          <div class="summary-row"><span>Producto</span><strong>${escapeHTML(product.name)}</strong></div>
+          <div class="summary-row"><span>Cantidad a fabricar</span><strong>${qty} unidades</strong></div>
+          <div class="summary-row"><span>Costo unitario</span><strong>${money(finalUnitCost)}</strong></div>
+          <div class="summary-row"><span>Inversión estimada</span><strong>${money(totalCost)}</strong></div>
+          <div class="summary-row"><span>Venta esperada</span><strong>${money(sales)}</strong></div>
+          <div class="summary-row total-line"><span>Ganancia estimada</span><strong>${money(profit)}</strong></div>
+        </div><div style="height:12px"></div><div class="table-wrap"><table><thead><tr><th>Material a comprar / usar</th><th class="number">Cantidad total</th><th class="number">Costo estimado</th></tr></thead><tbody>${measuredShopping.map(x=>`<tr><td>${escapeHTML(x.material?.name || 'Material eliminado')}<br><small>${money(materialUnitCost(x.material))}/${x.material?.unit || ''}</small></td><td class="number">${Number(x.totalQty.toFixed(2))} ${x.material?.unit || ''}</td><td class="number">${money(x.cost)}</td></tr>`).join('')}</tbody></table></div>`;
+      }
 
       document.getElementById('materialTotal').textContent = `${state.materials.length} materiales registrados`;
-      document.getElementById('materialTable').innerHTML = state.materials.length ? `<div class="table-wrap action-table"><table><thead><tr><th>Material</th><th>Categoría</th><th class="number">Compra</th><th class="number">Precio compra</th><th class="number">Costo unitario</th><th>Proveedor</th><th>Actualizado</th><th>Acciones</th></tr></thead><tbody>${state.materials.map(m=>`<tr><td><strong>${escapeHTML(m.name)}</strong><br><small>${escapeHTML(m.notes||'')}</small></td><td>${escapeHTML(m.category||'')}</td><td class="number">${num(m.packageQty)} ${m.unit}</td><td class="number">${money(m.packageCost)}</td><td class="number">${money(materialUnitCost(m))}/${m.unit}</td><td>${escapeHTML(m.supplier||'')}</td><td>${m.updatedAt||''}</td><td><div class="row-actions"><button class="secondary" onclick="editMaterial('${m.id}')">Editar</button><button class="danger" onclick="deleteMaterial('${m.id}')">Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay materiales registrados. Agrega ingredientes desde la guía de receta.</div>';
+      document.getElementById('materialTable').innerHTML = state.materials.length ? `<div class="table-wrap action-table"><table><thead><tr><th>Material</th><th>Categoría</th><th class="number">Compra</th><th class="number">Precio compra</th><th class="number">Costo unitario</th><th>Proveedor</th><th>Actualizado</th><th>Acciones</th></tr></thead><tbody>${state.materials.map(m=>`<tr><td><strong>${escapeHTML(m.name)}</strong><br><small>${escapeHTML(m.notes||'')}</small></td><td>${escapeHTML(m.category||'')}</td><td class="number">${num(m.packageQty)} ${m.unit}</td><td class="number">${money(m.packageCost)}</td><td class="number">${money(materialUnitCost(m))}/${m.unit}</td><td>${escapeHTML(m.supplier||'')}</td><td>${m.updatedAt||''}</td><td><div class="row-actions"><button class="secondary" onclick="editMaterial('${m.id}')">Editar</button><button class="danger" onclick="deleteMaterial('${m.id}')">Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aún no hay materiales registrados. Agrega ingredientes desde la receta del producto.</div>';
 
-      document.getElementById('recipeTotal').textContent = product ? `${items.length} ingredientes · costo unitario ${money(recipeOnlyCost)}` : '';
+      document.getElementById('recipeTotal').textContent = product ? `${items.length} ingredientes · ${status.pending ? status.pending + ' pendientes de medida' : 'receta lista'}` : '';
       document.getElementById('recipeTable').innerHTML = product && items.length ? `<div class="recipe-guide-card">
         <div class="summary-list" style="margin-bottom:10px">
           <div class="summary-row"><span>Producto</span><strong>${escapeHTML(product.name)}</strong></div>
           <div class="summary-row"><span>Precio venta</span><strong>${money(product.price)}</strong></div>
-          <div class="summary-row"><span>Costo unitario receta</span><strong>${money(recipeOnlyCost)}</strong></div>
-          <div class="summary-row total-line"><span>Ganancia por unidad</span><strong>${money(num(product.price)-recipeOnlyCost)}</strong></div>
+          <div class="summary-row"><span>Costo unitario</span><strong>${status.complete ? money(recipeOnlyCost) : 'Pendiente de medidas'}</strong></div>
+          <div class="summary-row total-line"><span>Estado</span><strong>${status.complete ? 'Listo para inversión' : 'Compras registradas'}</strong></div>
         </div>
         ${items.map(r=>{
           const m=materialById(r.materialId);
           const unit = m?.unit || '';
           const materialUnit = materialUnitCost(m);
-          const ingredientCost = num(r.qtyPerUnit)*materialUnit;
+          const hasMeasure = num(r.qtyPerUnit)>0;
+          const ingredientCost = hasMeasure ? num(r.qtyPerUnit)*materialUnit : 0;
           return `<div class="recipe-guide-item">
             <div class="recipe-guide-main">
               <span><strong>${escapeHTML(m?.name || 'Material eliminado')}</strong><small>${escapeHTML(m?.category || 'Ingrediente')} · Compra registrada: ${num(m?.packageQty)} ${unit} por ${money(m?.packageCost || 0)}</small></span>
-              <b>${money(ingredientCost)}</b>
+              <b>${hasMeasure ? money(ingredientCost) : '<span class="measure-pending">Medida pendiente</span>'}</b>
             </div>
             <div class="recipe-guide-numbers">
               <div><span>Costo material</span><b>${money(materialUnit)}/${unit}</b></div>
-              <div><span>Uso en 1 unidad</span><b>${num(r.qtyPerUnit)} ${unit}</b></div>
-              <div><span>Costo en receta</span><b>${money(ingredientCost)}</b></div>
+              <div><span>Uso en 1 unidad</span><b>${hasMeasure ? `${num(r.qtyPerUnit)} ${unit}` : 'Pendiente'}</b></div>
+              <div><span>Costo en receta</span><b>${hasMeasure ? money(ingredientCost) : 'Pendiente'}</b></div>
             </div>
             ${r.notes ? `<small>${escapeHTML(r.notes)}</small>` : ''}
           </div>`;
         }).join('')}
         <div class="recipe-guide-actions">
-          <button onclick="openRecipeBuilderModal('${product.id}')" data-recipe-action="open-builder" data-product-id="${product.id}">Editar receta completa</button>
-          <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Actualizar costo del producto</button>
+          <button onclick="openRecipeBuilderModal('${product.id}')" data-recipe-action="open-builder" data-product-id="${product.id}">${status.complete ? 'Editar receta completa' : 'Agregar medidas pendientes'}</button>
+          <button class="secondary" onclick="syncSelectedRecipeCost()" data-recipe-action="sync-cost">Calcular costo final</button>
         </div>
-      </div>` : `<div class="empty">Este producto aún no tiene receta. Usa el botón <strong>Abrir guía de ingredientes</strong> para registrar materiales, costos de compra y cantidad usada por unidad.</div>`;
+      </div>` : `<div class="empty">Este producto aún no tiene ingredientes. Usa el botón <strong>Abrir receta del producto</strong> para registrar lo que compras y su costo.</div>`;
     }
 
     function renderAccounting(){
@@ -3375,11 +3468,22 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
     function syncSelectedRecipeCost(){
       const product = productById(document.getElementById('recipeProductSelect')?.value);
       if(!product){ toast('Selecciona un producto.'); return; }
+      const status = recipeMeasureStatus(product.id);
+      if(status.total <= 0){
+        toast('Primero registra los ingredientes comprados de este producto.');
+        openRecipeBuilderModal(product.id);
+        return;
+      }
+      if(!status.complete){
+        toast('Faltan medidas por unidad. Completa la cantidad usada de cada ingrediente.');
+        openRecipeBuilderModal(product.id);
+        return;
+      }
       const cost = recipeCost(product.id);
-      if(cost <= 0){ toast('Este producto aún no tiene receta para calcular costo.'); return; }
+      if(cost <= 0){ toast('Revisa las cantidades y costos de la receta.'); return; }
       product.cost = Math.round(cost);
       renderAll();
-      toast('Costo unitario del producto actualizado con la receta actual.');
+      toast('Costo unitario actualizado con la receta completa.');
     }
 
     function exportJSON(){
@@ -3443,6 +3547,7 @@ Muchas gracias por tu compra y por apoyar nuestro emprendimiento. 💛`;
       removeRecipeBuilderRow,
       saveRecipeBuilder,
       recalcRecipeBuilder,
+      recipeMeasureStatus,
       setupRecipeButtons
     });
 
