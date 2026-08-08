@@ -1,0 +1,10 @@
+{
+  "version": "C3.8",
+  "schemaVersion": 3,
+  "released": "2026-08-07",
+  "firebaseProject": "dulce-antojo-3c160",
+  "build": "production-root-bat",
+  "security": "firebase-auth-email-password",
+  "name": "Dulce Antojo",
+  "channel": "production"
+}
